@@ -123,7 +123,7 @@ utenti *LoginRegistrazione(utenti **radice,int *errore){
         do{
             printf("\ninserisci il NickName-->");
             if (nick==100){
-                *errore=100;
+                *errore=CodAdmin;
             }
             scanf("%s", nick);
             do {
