@@ -147,4 +147,4 @@ utenti *LoginRegistrazione(utenti **radice,int *errore){
     }
     utenti* tmp=TrovaUtente(nick,*radice);
     return tmp;
-}//BISOGNA IMPLEMENTARE IL CASO IN CUI L'UTENTE è UN'ADMIN
+}
