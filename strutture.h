@@ -3,6 +3,8 @@
 #define a_accentata 160
 #define u_accentata 151
 #define dollaro 36
+#define dim1 20
+#define CodAdmin 100
 
 
 typedef struct  AlberoCitta{
@@ -23,4 +25,12 @@ typedef struct ListaNext{
     struct ListaNext *next;
 }ListaNext;
 
-//IMPLEMENTA ALBERO UTENTI
+typedef struct utenti {
+    char 	*nickname;
+    char 	*password;
+    float 	saldo;
+    struct 	albero_Utenti* sx;
+    struct 	albero_Utenti* dx;
+}utenti;
+
+utenti *LoginRegistrazione(utenti **radice,int *errore);
