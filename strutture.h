@@ -19,6 +19,7 @@ typedef struct Citta {
     short treno;
     struct ListaNext *ListaAereo;
     struct ListaNext *ListaTreno;
+    struct Hotel *ListaHotel;
 }Citta;
 typedef struct ListaNext{
     Citta *citta;
@@ -34,5 +35,9 @@ typedef struct utenti {
     struct 	albero_Utenti* sx;
     struct 	albero_Utenti* dx;
 }utenti;
+typedef struct Hotel{
+    char nome[dim1];
+    struct Hotel *next;
+}Hotel;
 
 utenti *LoginRegistrazione(utenti **radice,int *errore);

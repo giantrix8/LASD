@@ -2,35 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include "strutture.h"
-/*
-static ListaNext *CaricaCitta(char **nome, int Leng){
-    ListaNext *tmp;
-    if (Leng>0){
-        tmp=(ListaNext*)malloc(sizeof(ListaNext));
-        strcpy(tmp->citta,nome[Leng-1]);
-        tmp->next=CaricaCitta(nome,Leng-1);
-    }
-    else {tmp=NULL;}
-    return tmp;
-}
- static ListaNext *InserisciListaNext(ListaNext *testa,char **nome, int Leng){
-    if (testa==NULL){
-            testa=CaricaCitta(nome,Leng);
-        }
-    else{
-        testa->next= InserisciListaNext(testa->next,nome,Leng);
-    }
-    return testa;
-}*/
+
 static AlberoCitta *InserisciCitta(char *nome,short aereo,short treno) {
     AlberoCitta *tmp;
     tmp=(AlberoCitta*)malloc(sizeof(AlberoCitta));
     if (tmp==NULL)
     {
-        printf ("non %c stato possibile allocare la memoria\n", e_accentata);
+        printf ("\nnon %c stato possibile allocare la memoria\n", e_accentata);
         return NULL;
     }
     tmp->citta->ListaAereo=tmp->dx=tmp->sx=tmp->citta->ListaTreno=NULL;
+    tmp->citta->ListaHotel=NULL;
     tmp->citta=(Citta*)malloc(sizeof(Citta));
     strcpy(tmp->citta->nome,nome);
     tmp->citta->aereo=aereo;
@@ -54,9 +36,63 @@ static AlberoCitta *RiempiAlberoCitta(AlberoCitta *radice, char *nome, short aer
     }
     return radice;
 }
-static AlberoCitta CercaNodo(){}
+static AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore) {
+    int controllo;
+    controllo = strcmp(radice->citta->nome, nome);
+    if (controllo == 0) {
+        *errore=1;
+        return radice;
+    }
+    if (controllo > 0) {
+        radice->sx = CercaNodo(radice->sx, nome,errore);
+    } else if (controllo < 0) {
+        radice->dx = CercaNodo(radice->dx, nome,errore);
+    }
+}
+
+static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazione, float prezzo, int tempo){
+    ListaNext *tmp;
+    tmp=(ListaNext*)malloc(sizeof (ListaNext));
+    if(tmp==NULL){
+        printf("\nLa memoria non %c stata allocata",e_accentata);
+        return testa;
+    }
+    tmp->prezzo=prezzo;
+    tmp->durata=tempo;
+    tmp->citta=destinazione;
+    tmp->next=testa;
+    return tmp;
+}
+//napoli---->milano     tmp=napoli
+
+//tipo==1 se si aggiunge nella lista aereo
+static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *destinazione, float prezzo, int tempo,short tipo){
+    AlberoCitta *CittaPartenza,*CittaDestinazione;
+    int errore=0;
+    CittaPartenza=CercaNodo(radice,partenza,&errore);
+    if (errore==1){
+        CittaDestinazione=CercaNodo(radice,destinazione,&errore);
+        if (errore==1){
+            if (tipo==1) {
+                CittaPartenza->citta->ListaAereo = InserisciDestinazione(CittaPartenza->citta->ListaAereo,CittaDestinazione, prezzo, tempo);
+            }
+            else{
+                CittaPartenza->citta->ListaTreno = InserisciDestinazione(CittaPartenza->citta->ListaTreno,CittaDestinazione, prezzo, tempo);
+            }
+        }
+        else {
+            printf("\nLa destinazione non %c stata trovata", e_accentata);
+        }
+    }
+    else
+    {
+        printf("\nLa citt%c di partenza non %c stata trovata",a_accentata, e_accentata);
+    }
+}
+/*
 AlberoCitta  *EliminaNodo(AlberoCitta *radice,char *nome){
     AlberoCitta *tmp;
     tmp=CercaNodo(radice,nome);
 
 }
+ */
