@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "strutture.h"
+/*
 static ListaNext *CaricaCitta(char **nome, int Leng){
     ListaNext *tmp;
     if (Leng>0){
@@ -20,8 +21,8 @@ static ListaNext *CaricaCitta(char **nome, int Leng){
         testa->next= InserisciListaNext(testa->next,nome,Leng);
     }
     return testa;
-}
-static AlberoCitta *InserisciCitta(char *nome,short aereo,short treno,char **ListaAereo,char **ListaTreno,int LengA, int LengT) {
+}*/
+static AlberoCitta *InserisciCitta(char *nome,short aereo,short treno) {
     AlberoCitta *tmp;
     tmp=(AlberoCitta*)malloc(sizeof(AlberoCitta));
     if (tmp==NULL)
@@ -29,38 +30,33 @@ static AlberoCitta *InserisciCitta(char *nome,short aereo,short treno,char **Lis
         printf ("non %c stato possibile allocare la memoria\n", e_accentata);
         return NULL;
     }
-    tmp->dx=tmp->sx=NULL;
+    tmp->citta->ListaAereo=tmp->dx=tmp->sx=tmp->citta->ListaTreno=NULL;
     tmp->citta=(Citta*)malloc(sizeof(Citta));
     strcpy(tmp->citta->nome,nome);
     tmp->citta->aereo=aereo;
     tmp->citta->treno=treno;
-    if (LengT!=0){
-        tmp->citta->ListaTreno= InserisciListaNext(NULL,ListaTreno,LengT);
-    }
-    else{
-        tmp->citta->ListaTreno=NULL;
-    }
-    if (LengA!=0){
-        tmp->citta->ListaAereo= InserisciListaNext(NULL,ListaAereo,LengA);
-    }
-    else{
-        tmp->citta->ListaAereo=NULL;
-    }
+    tmp->citta->ListaAereo;
     return tmp;
 }
-static AlberoCitta *RiempiAlberoCitta(AlberoCitta *radice, char *nome, short aereo, short treno, char **ListaAereo, char **ListaTreno, int LengA, int LengT){
+static AlberoCitta *RiempiAlberoCitta(AlberoCitta *radice, char *nome, short aereo, short treno){
     if(radice == NULL) {
-        radice = InserisciCitta(nome,aereo,treno,ListaAereo,ListaTreno,LengA,LengT);
+        radice = InserisciCitta(nome,aereo,treno);
     }
     else {
         int controllo;
         controllo=strcmp(radice->citta->nome,nome);
         if(controllo>0){
-            radice->sx= RiempiAlberoCitta(radice->sx,nome,aereo,treno,ListaAereo,ListaTreno,LengA,LengT);
+            radice->sx= RiempiAlberoCitta(radice->sx,nome,aereo,treno);
         }
         else if (controllo<0) {
-            radice->dx =  RiempiAlberoCitta(radice->dx,nome,aereo,treno,ListaAereo,ListaTreno,LengA,LengT);
+            radice->dx =  RiempiAlberoCitta(radice->dx,nome,aereo,treno);
         }
     }
     return radice;
+}
+static AlberoCitta CercaNodo(){}
+AlberoCitta  *EliminaNodo(AlberoCitta *radice,char *nome){
+    AlberoCitta *tmp;
+    tmp=CercaNodo(radice,nome);
+
 }

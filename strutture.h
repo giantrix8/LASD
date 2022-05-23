@@ -21,8 +21,10 @@ typedef struct Citta {
     struct ListaNext *ListaTreno;
 }Citta;
 typedef struct ListaNext{
-    char citta[LenC];
+    Citta *citta;
     struct ListaNext *next;
+    float prezzo;
+    int durata;
 }ListaNext;
 
 typedef struct utenti {
