@@ -145,3 +145,41 @@ static AlberoCitta *EliminaNodo(AlberoCitta *padre,AlberoCitta *radice,char *nom
     return radice;
 }
 
+ AlberoCitta *carica_grafo(AlberoCitta *radice)
+ {
+ 	FILE *fp = NULL;
+ 	AlberoCitta *currentNodo;
+ 	Citta *currentCitta;
+ 	char currentName[LenC], destName[LenC];
+ 	short treno, aereo;
+ 	float prezzo;
+ 	int durata, errore = 0;
+ 	
+ 	//Caricamento albero delle città
+ 	fp = fopen("citta.txt", "r");
+ 	while(fscanf(fp, "%s %d %d", currentName, &treno, &aereo) > 0)
+ 		radice = RiempiAlberoCitta(radice, currentName, aereo, treno);	
+ 	fclose(fp);
+ 	
+ 	//Caricamento liste di adiacenza
+ 	fp = fopen("adiacenze.txt", "r");
+ 	while(fscanf(fp, "%s", currentName) > 0)
+ 	{
+ 		//Inserimenti in lista treni
+ 		while(fscanf(fp, "%s %f %d", destName, &prezzo, &durata) > 0)
+ 		{
+ 			if(strcmp("0", destName) == 0)
+			 	break;
+			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 0);
+		}
+		//inserimenro in lista aerei
+ 		while(fscanf(fp, "%s %f %d", destName, &prezzo, &durata) > 0)
+ 		{
+ 			if(strcmp("0", destName) == 0)
+			 	break;
+			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 1);
+		}
+	}
+	fclose(fp);
+	return radice;
+ }
