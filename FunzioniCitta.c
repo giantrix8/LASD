@@ -88,7 +88,7 @@ static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *de
         printf("\nLa citt%c di partenza non %c stata trovata",a_accentata, e_accentata);
     }
 }
-void CercaFogliaMinAlberoCitta(AlberoCitta **radice){
+static void CercaFogliaMinAlberoCitta(AlberoCitta **radice){
     AlberoCitta *tmp;
     tmp=*radice;
     if (tmp->sx!=NULL){
@@ -101,7 +101,29 @@ void CercaFogliaMinAlberoCitta(AlberoCitta **radice){
         *radice=tmp;
     }
 }
-void FreeListaCitta(AlberoCitta *radice){
+static void DeallocaListaCitta(ListaNext *lista, char *nome){
+    if (lista!=NULL){
+        if(strcmp(lista->citta->nome,nome)==0){
+            ListaNext *tmp;
+            tmp=lista;
+            lista=lista->next;
+            free(tmp);
+            DeallocaListaCitta(lista,nome);
+        }
+        else{
+            DeallocaListaCitta(lista->next,nome);
+        }
+    }
+}
+static void EliminaListaCitta(AlberoCitta *radice, char*nome){
+    if (radice!=NULL){
+        DeallocaListaCitta(radice->citta->ListaAereo,nome);
+        DeallocaListaCitta(radice->citta->ListaTreno,nome);
+        EliminaListaCitta(radice->sx,nome);
+        EliminaListaCitta(radice->dx,nome);
+    }
+}
+static void FreeListaCitta(AlberoCitta *radice){
     while (radice->citta->ListaAereo!=NULL) {
         free(radice->citta->ListaAereo);
     }
@@ -113,11 +135,12 @@ void FreeListaCitta(AlberoCitta *radice){
     }
     free(radice->citta);
 }
-static AlberoCitta *EliminaNodo(AlberoCitta *padre,AlberoCitta *radice,char *nome){
+
+AlberoCitta *EliminaNodo(AlberoCitta *padre,AlberoCitta *radice,char *nome){
     if(radice!=NULL) {
         if (strcmp(radice->citta->nome,nome)==0){
             FreeListaCitta(radice);
-            if (radice->sx==NULL && radice==NULL){
+            if (radice->sx==NULL && radice->dx==NULL){
                 free(radice);
             }
             else if(radice->sx!=NULL && radice->dx!=NULL){
@@ -144,42 +167,46 @@ static AlberoCitta *EliminaNodo(AlberoCitta *padre,AlberoCitta *radice,char *nom
     }
     return radice;
 }
+AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome){
+    testa=EliminaNodo(NULL,testa,nome);
+    EliminaListaCitta(testa,nome);
+    return testa;
+}
+AlberoCitta *carica_grafo(AlberoCitta *radice)
+{
+    FILE *fp = NULL;
+    AlberoCitta *currentNodo;
+    Citta *currentCitta;
+    char currentName[LenC], destName[LenC];
+    short treno, aereo;
+    float prezzo;
+    int durata, errore = 0;
 
- AlberoCitta *carica_grafo(AlberoCitta *radice)
- {
- 	FILE *fp = NULL;
- 	AlberoCitta *currentNodo;
- 	Citta *currentCitta;
- 	char currentName[LenC], destName[LenC];
- 	short treno, aereo;
- 	float prezzo;
- 	int durata, errore = 0;
- 	
- 	//Caricamento albero delle città
- 	fp = fopen("citta.txt", "r");
- 	while(fscanf(fp, "%s %d %d", currentName, &treno, &aereo) > 0)
- 		radice = RiempiAlberoCitta(radice, currentName, aereo, treno);	
- 	fclose(fp);
- 	
- 	//Caricamento liste di adiacenza
- 	fp = fopen("adiacenze.txt", "r");
- 	while(fscanf(fp, "%s", currentName) > 0)
- 	{
- 		//Inserimenti in lista treni
- 		while(fscanf(fp, "%s %f %d", destName, &prezzo, &durata) > 0)
- 		{
- 			if(strcmp("0", destName) == 0)
-			 	break;
-			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 0);
-		}
-		//inserimenro in lista aerei
- 		while(fscanf(fp, "%s %f %d", destName, &prezzo, &durata) > 0)
- 		{
- 			if(strcmp("0", destName) == 0)
-			 	break;
-			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 1);
-		}
-	}
-	fclose(fp);
-	return radice;
- }
+    //Caricamento albero delle città
+    fp = fopen("citta.txt", "r");
+    while(fscanf(fp, "%s %d %d", currentName, &treno, &aereo) > 0)
+        radice = RiempiAlberoCitta(radice, currentName, aereo, treno);
+    fclose(fp);
+
+    //Caricamento liste di adiacenza
+    fp = fopen("adiacenze.txt", "r");
+    while(fscanf(fp, "%s", currentName) > 0)
+    {
+        //Inserimenti in lista treni
+        while(fscanf(fp, "%s %f %d", destName, &prezzo, &durata) > 0)
+        {
+            if(strcmp("0", destName) == 0)
+                break;
+            InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 0);
+        }
+        //inserimenro in lista aerei
+        while(fscanf(fp, "%s %f %d", destName, &prezzo, &durata) > 0)
+        {
+            if(strcmp("0", destName) == 0)
+                break;
+            InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 1);
+        }
+    }
+    fclose(fp);
+    return radice;
+}
