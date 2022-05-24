@@ -11,15 +11,13 @@ static AlberoCitta *InserisciCitta(char *nome,short aereo,short treno) {
         printf ("\nnon %c stato possibile allocare la memoria\n", e_accentata);
         return NULL;
     }
-    tmp->dx = NULL;
-    tmp->sx = NULL;
-    tmp->citta = (Citta*)malloc(sizeof(Citta));
-    strcpy(tmp->citta->nome, nome);
-    tmp->citta->aereo = aereo;
-    tmp->citta->treno = treno;
-    tmp->citta->ListaAereo = NULL;
-    tmp->citta->ListaTreno = NULL;
-    tmp->citta->ListaHotel = NULL;
+    tmp->citta->ListaAereo=tmp->dx=tmp->sx=tmp->citta->ListaTreno=NULL;
+    tmp->citta->ListaHotel=NULL;
+    tmp->citta=(Citta*)malloc(sizeof(Citta));
+    strcpy(tmp->citta->nome,nome);
+    tmp->citta->aereo=aereo;
+    tmp->citta->treno=treno;
+    tmp->citta->ListaAereo;
     return tmp;
 }
 static AlberoCitta *RiempiAlberoCitta(AlberoCitta *radice, char *nome, short aereo, short treno){
@@ -52,7 +50,7 @@ static AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore) {
     }
 }
 
-static ListaNext *InserisciDestinazione(ListaNext *testa, Citta *destinazione, float prezzo, int tempo){
+static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazione, float prezzo, int tempo){
     ListaNext *tmp;
     tmp=(ListaNext*)malloc(sizeof (ListaNext));
     if(tmp==NULL){
@@ -65,9 +63,8 @@ static ListaNext *InserisciDestinazione(ListaNext *testa, Citta *destinazione, f
     tmp->next=testa;
     return tmp;
 }
-//napoli---->milano     tmp=napoli
 
-//tipo==1 se si aggiunge nella lista aereo, tipo == 0 se si aggiunge nella lista treno
+//tipo==1 se si aggiunge nella lista aereo
 static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *destinazione, float prezzo, int tempo,short tipo){
     AlberoCitta *CittaPartenza,*CittaDestinazione;
     int errore=0;
@@ -76,10 +73,10 @@ static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *de
         CittaDestinazione=CercaNodo(radice,destinazione,&errore);
         if (errore==1){
             if (tipo==1) {
-                CittaPartenza->citta->ListaAereo = InserisciDestinazione(CittaPartenza->citta->ListaAereo,CittaDestinazione->citta, prezzo, tempo);
+                CittaPartenza->citta->ListaAereo = InserisciDestinazione(CittaPartenza->citta->ListaAereo,CittaDestinazione, prezzo, tempo);
             }
             else{
-                CittaPartenza->citta->ListaTreno = InserisciDestinazione(CittaPartenza->citta->ListaTreno,CittaDestinazione->citta, prezzo, tempo);
+                CittaPartenza->citta->ListaTreno = InserisciDestinazione(CittaPartenza->citta->ListaTreno,CittaDestinazione, prezzo, tempo);
             }
         }
         else {
@@ -92,14 +89,56 @@ static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *de
     }
 }
 /*
-AlberoCitta  *EliminaNodo(AlberoCitta *radice,char *nome){
-    AlberoCitta *tmp;
-    tmp=CercaNodo(radice,nome);
+static CercaMaxAlberoCitta(AlberoCitta *radice){
+    if (radice->dx==NULL){
+        return radice;
+    }
+    CercaMinAlberoCitta(radice->sx);
 }
- */
- 
- AlberoCitta *carica_grafo(AlberoCitta *ABRcitta)
- {
- 	
- 	
- }
+*/
+void CercaFogliaMinAlberoCitta(AlberoCitta **radice){
+    AlberoCitta *tmp;
+    tmp=*radice;
+    if (tmp->sx!=NULL){
+        CercaFogliaMinAlberoCitta(&tmp->sx);
+    }
+    else if (tmp->sx==NULL && tmp->dx!=NULL){
+        CercaFogliaMinAlberoCitta(&tmp->dx);
+    }
+    else if (tmp->sx==NULL && tmp->dx==NULL){
+        *radice=tmp;
+    }
+}
+
+static AlberoCitta *EliminaNodo(AlberoCitta *padre,AlberoCitta *radice,char *nome){
+    if(radice!=NULL) {
+        if (strcmp(radice->citta->nome,nome)==0){
+            //free liste adiacenza
+            if (radice->sx==NULL && radice==NULL){
+                free(radice);
+            }
+            else if(radice->sx!=NULL && radice->dx!=NULL){
+                AlberoCitta *tmp=radice;
+                CercaFogliaMinAlberoCitta(&tmp->dx);
+                radice->citta=tmp->citta;
+                free(tmp);
+            }
+            else if (radice->sx!=NULL && radice->dx==NULL){
+                padre->sx=radice->sx;
+                free(radice);
+                radice=padre->sx;
+            }
+            else if (radice->sx==NULL && radice->dx!=NULL){
+                padre->dx=radice->dx;
+                free(radice);
+                radice=padre->dx;
+            }
+        }
+        else {
+            radice = EliminaNodo(radice, radice->sx, nome);
+            radice = EliminaNodo(radice, radice->dx, nome);
+        }
+    }
+    return radice;
+}
+
