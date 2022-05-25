@@ -43,4 +43,5 @@ typedef struct Hotel{
 utenti *LoginRegistrazione(utenti **radice,int *errore);
 AlberoCitta *EliminaNodo(AlberoCitta *padre,AlberoCitta *radice,char *nome);
 AlberoCitta *carica_grafo(AlberoCitta *radice);
+void salva_grafo(AlberoCitta *radice);
 AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome);
