@@ -247,3 +247,56 @@ AlberoCitta *carica_grafo(AlberoCitta *radice)
     fclose(fp);
     return radice;
 }
+void salva_citta(AlberoCitta *radice, FILE *fp)
+{
+	if(radice != NULL)
+	{
+		fprintf(fp, "%s ", radice->citta->nome);
+		fprintf(fp, "%d %d\n", radice->citta->treno, radice->citta->aereo);
+		salva_citta(radice->sx, fp);
+		salva_citta(radice->dx, fp);
+	}
+}
+
+void salva_adiacenze(AlberoCitta *radice, FILE *fp)
+{
+	ListaNext *curr;
+	if(radice != NULL)
+	{
+		fprintf(fp, "%s ", radice->citta->nome);
+		//Salva lista treni
+		curr = radice->citta->ListaTreno;
+		while (curr != NULL)
+		{
+			fprintf(fp, "%s ", curr->citta->nome);
+			fprintf(fp, "%f ", curr->prezzo);
+			fprintf(fp, "%d ", curr->durata);
+			curr = curr->next;
+		}
+		fprintf(fp, "0 ");
+		//Salva lista aerei
+		curr = radice->citta->ListaAereo;
+		while (curr != NULL)
+		{
+			fprintf(fp, "%s ", curr->citta->nome);
+			fprintf(fp, "%f ", curr->prezzo);
+			fprintf(fp, "%d ", curr->durata);
+			curr = curr->next;
+		}
+		fprintf(fp, "0\n");
+		salva_adiacenze(radice->sx, fp);
+		salva_adiacenze(radice->dx, fp);
+	}
+}
+
+void salva_grafo(AlberoCitta *radice)
+ {
+ 	FILE *fp;
+ 	fp = fopen("citta.txt", "w");
+ 	salva_citta(radice, fp);
+ 	fclose(fp);
+ 	
+ 	fp = fopen("adiacenze.txt", "w");
+ 	salva_adiacenze(radice, fp);
+ 	fclose(fp);
+ }
