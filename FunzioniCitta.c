@@ -23,7 +23,6 @@ static AlberoCitta *InserisciCitta(char *nome,short aereo,short treno, int key) 
     tmp->citta->key = key;
     return tmp;
 }
-
 static AlberoCitta *RiempiAlberoCitta(AlberoCitta *radice, char *nome, short aereo, short treno, int key){
     if(radice == NULL) {
         radice = InserisciCitta(nome,aereo,treno, key);
@@ -70,16 +69,20 @@ static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazio
     tmp->durata=tempo;
     tmp->citta=destinazione->citta;
     tmp->next=testa;
+    printf("%s ", tmp->citta->nome);
+    printf("durata: %f\n", tmp->durata);
     return tmp;
 }
 
 //tipo==1 se si aggiunge nella lista aereo, tipo==0 se si aggiunge nella lista treno
-static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *destinazione, float prezzo, int tempo,short tipo){
+static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *destinazione, float prezzo, float tempo,short tipo){
     AlberoCitta *CittaPartenza,*CittaDestinazione;
-    CittaPartenza=CercaNodo(radice,partenza);
-    if (CittaPartenza==NULL){
-        CittaDestinazione=CercaNodo(radice,destinazione);
-        if (CittaDestinazione==NULL){
+    int errore=0;
+    CittaPartenza=CercaNodo(radice,partenza,&errore);
+    printf("inserito: %s - ", CittaPartenza->citta->nome);
+    if (errore==1){
+        CittaDestinazione=CercaNodo(radice,destinazione,&errore);
+        if (errore==1){
             if (tipo==1) {
                 CittaPartenza->citta->ListaAereo = InserisciDestinazione(CittaPartenza->citta->ListaAereo,CittaDestinazione, prezzo, tempo);
             }
