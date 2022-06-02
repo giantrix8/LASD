@@ -22,6 +22,7 @@ typedef struct Citta {
     struct ListaNext *ListaTreno;
     struct Hotel *ListaHotel;
 } Citta;
+
 typedef struct ListaNext{
     Citta *citta;
     struct ListaNext *next;
