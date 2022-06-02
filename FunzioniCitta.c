@@ -23,6 +23,7 @@ static AlberoCitta *InserisciCitta(char *nome,short aereo,short treno, int key) 
     tmp->citta->key = key;
     return tmp;
 }
+
 static AlberoCitta *RiempiAlberoCitta(AlberoCitta *radice, char *nome, short aereo, short treno, int key){
     if(radice == NULL) {
         radice = InserisciCitta(nome,aereo,treno, key);
@@ -96,11 +97,12 @@ static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *de
         printf("\nLa citt%c di partenza non %c stata trovata",a_accentata, e_accentata);
     }
 }
-static *CercaPadre(AlberoCitta *radice, char *nome){
+
+static AlberoCitta *CercaPadre(AlberoCitta *radice, char *nome){
     AlberoCitta *padre=NULL,*tmp=radice;
     int trovato=0,controllo;
     while(tmp!=NULL && trovato==0){
-        controllo= strcmp(radice->citta->nome,nome);
+        controllo= strcmp(tmp->citta->nome,nome);
         if (controllo==0){
             trovato=1;
         }
@@ -113,6 +115,7 @@ static *CercaPadre(AlberoCitta *radice, char *nome){
             tmp=tmp->dx;
         }
     }
+    return padre;
 }
 
 static AlberoCitta *CercaFogliaMinAlberoCitta(AlberoCitta *radice){
@@ -137,6 +140,7 @@ static void DeallocaListaCitta(ListaNext *lista, char *nome){
         }
     }
 }
+
 static void EliminaListaCitta(AlberoCitta *radice, char*nome){
     if (radice!=NULL){
         DeallocaListaCitta(radice->citta->ListaAereo,nome);
@@ -145,6 +149,7 @@ static void EliminaListaCitta(AlberoCitta *radice, char*nome){
         EliminaListaCitta(radice->dx,nome);
     }
 }
+
 static void FreeListeAdiacenzaCitta(AlberoCitta *radice){
     ListaNext *tmp;
     while (radice->citta->ListaAereo!=NULL) {
