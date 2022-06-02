@@ -1,4 +1,4 @@
 Milano 1 1
+Bari 1 1
 Torino 1 1
 Roma 1 1
-Napoli 1 1

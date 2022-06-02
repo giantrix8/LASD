@@ -1,4 +1,5 @@
-Milano Napoli 60 300 Roma 50 180 Torino 40 100 0 Roma 40 50 Napoli 80 75 0
-Torino Milano 40 100 Roma 50 120 0 Milano 35 40 Napoli 70 60 0
-Roma Torino 50 120 Milano 50 180 Napoli 30 90 0 Milano 40 50 0
-Napoli Roma 30 90 Milano 60 300 0 Milano 80 75 0
+Milano Torino 40.000000 100 Roma 50.000000 180 Bari 60.000000 300 0 Bari 80.000000 75 Roma 40.000000 50 0
+Torino Roma 50.000000 120 Milano 40.000000 100 0 Bari 70.000000 60 Milano 35.000000 40 0
+Roma Bari 30.000000 90 Milano 50.000000 180 Torino 50.000000 120 0 Milano 40.000000 50 0
+Bari Milano 60.000000 300 Roma 30.000000 90 0 Milano 80.000000 75 0
+

@@ -14,6 +14,7 @@ typedef struct  AlberoCitta{
 }AlberoCitta;
 
 typedef struct Citta {
+    int key;
     char nome[LenC];
     short aereo;
     short treno;
@@ -35,13 +36,28 @@ typedef struct utenti {
     struct 	albero_Utenti* sx;
     struct 	albero_Utenti* dx;
 }utenti;
+
 typedef struct Hotel{
     char nome[dim1];
     struct Hotel *next;
 }Hotel;
+
+typedef struct DjkElem{
+    Citta *citta;
+    float peso[2];
+    Citta* prev;
+}DjkElem;
+
+typedef struct path {
+    Citta *node;
+    struct path *next;
+} Path;
 
 utenti *LoginRegistrazione(utenti **radice,int *errore);
 AlberoCitta *EliminaNodo(AlberoCitta *padre,AlberoCitta *radice,char *nome);
 AlberoCitta *carica_grafo(AlberoCitta *radice);
 void salva_grafo(AlberoCitta *radice);
 AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome);
+int contaCitta(AlberoCitta *radice);
+AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore);
+Path *FindMinPath(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
