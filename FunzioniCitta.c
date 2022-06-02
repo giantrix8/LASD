@@ -175,7 +175,8 @@ static AlberoCitta *EliminaNodoCitta(AlberoCitta *TestaAlbero,char *nome){
     if(TestaAlbero!=NULL) {
         AlberoCitta *radice=TestaAlbero;
         AlberoCitta *padre;
-        radice= CercaNodo(radice,nome);
+	int errore = 1;
+        radice= CercaNodo(radice,nome,&errore);
         if (radice==NULL){
             printf("/nIl nodo da eliminare non %c presente.",e_accentata);
             return TestaAlbero;
