@@ -60,7 +60,7 @@ static AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome) {
     return NULL;
 }
 
-static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazione, float prezzo, int tempo){
+static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazione, float prezzo, float tempo){
     ListaNext *tmp;
     tmp=(ListaNext*)malloc(sizeof (ListaNext));
     if(tmp==NULL){
@@ -69,7 +69,7 @@ static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazio
     }
     tmp->prezzo=prezzo;
     tmp->durata=tempo;
-    tmp->citta=destinazione;
+    tmp->citta=destinazione->citta;
     tmp->next=testa;
     return tmp;
 }
@@ -227,8 +227,8 @@ AlberoCitta *carica_grafo(AlberoCitta *radice)
  	Citta *currentCitta;
  	char currentName[LenC], destName[LenC];
  	short treno, aereo;
- 	float prezzo;
- 	int durata, i = 0, errore = 0;
+ 	float prezzo, durata;
+ 	int i = 0, errore = 0;
  	
  	//Caricamento albero delle città
  	fp = fopen("citta.txt", "r");
@@ -245,14 +245,14 @@ AlberoCitta *carica_grafo(AlberoCitta *radice)
  	while(fscanf(fp, "%s", currentName) > 0)
  	{
  		//Inserimenti in lista treni
- 		while(fscanf(fp, "%s %f %d", destName, &prezzo, &durata) > 0)
+ 		while(fscanf(fp, "%s %f %f", destName, &prezzo, &durata) > 0)
  		{
  			if(strcmp("0", destName) == 0)
 			 	break;
 			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 0);;
 		}
 		//inserimenro in lista aerei
- 		while(fscanf(fp, "%s %f %d", destName, &prezzo, &durata) > 0)
+ 		while(fscanf(fp, "%s %f %f", destName, &prezzo, &durata) > 0)
  		{
  			if(strcmp("0", destName) == 0)
 			 	break;
@@ -285,8 +285,8 @@ void salva_adiacenze(AlberoCitta *radice, FILE *fp)
 		while (curr != NULL)
 		{
 			fprintf(fp, "%s ", curr->citta->nome);
-			fprintf(fp, "%f ", curr->prezzo);
-			fprintf(fp, "%d ", curr->durata);
+			fprintf(fp, "%.2f ", curr->prezzo);
+			fprintf(fp, "%.0f ", curr->durata);
 			curr = curr->next;
 		}
 		fprintf(fp, "0 ");
@@ -295,8 +295,8 @@ void salva_adiacenze(AlberoCitta *radice, FILE *fp)
 		while (curr != NULL)
 		{
 			fprintf(fp, "%s ", curr->citta->nome);
-			fprintf(fp, "%f ", curr->prezzo);
-			fprintf(fp, "%d ", curr->durata);
+			fprintf(fp, "%.2f ", curr->prezzo);
+			fprintf(fp, "%.0f ", curr->durata);
 			curr = curr->next;
 		}
 		fprintf(fp, "0\n");
