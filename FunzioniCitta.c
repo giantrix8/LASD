@@ -41,23 +41,22 @@ static AlberoCitta *RiempiAlberoCitta(AlberoCitta *radice, char *nome, short aer
     return radice;
 }
 
-static AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome) {
+AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore) {
     int controllo;
-    AlberoCitta *nodo;
-    nodo=radice;
-    while(nodo!=NULL){
-        controllo=strcmp(nodo->citta->nome, nome);
-        if (controllo==0){
-            return nodo;
-        }
-        else if (controllo==1){
-            nodo=nodo->sx;
-        }
-        else {
-            nodo=nodo->dx;
-        }
+    AlberoCitta *result = NULL;
+
+    controllo = strcmp(radice->citta->nome, nome);
+    if (controllo == 0) {
+        *errore=1;
+        result = radice;
     }
-    return NULL;
+    else if (controllo > 0) {
+        result = CercaNodo(radice->sx, nome,errore);
+    }
+    else {
+        result = CercaNodo(radice->dx, nome,errore);
+    }
+    return result;
 }
 
 static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazione, float prezzo, float tempo){
