@@ -11,7 +11,7 @@ typedef struct  AlberoCitta{
     struct Citta *citta;
     struct AlberoCitta *dx;
     struct AlberoCitta *sx;
-}AlberoCitta;
+} AlberoCitta;
 
 typedef struct Citta {
     int key;
@@ -21,13 +21,13 @@ typedef struct Citta {
     struct ListaNext *ListaAereo;
     struct ListaNext *ListaTreno;
     struct Hotel *ListaHotel;
-}Citta;
+} Citta;
 typedef struct ListaNext{
     Citta *citta;
     struct ListaNext *next;
     float prezzo;
-    int durata;
-}ListaNext;
+    float durata;
+} ListaNext;
 
 typedef struct utenti {
     char 	*nickname;
@@ -35,21 +35,21 @@ typedef struct utenti {
     float 	saldo;
     struct 	albero_Utenti* sx;
     struct 	albero_Utenti* dx;
-}utenti;
+} utenti;
 
 typedef struct Hotel{
     char nome[dim1];
     struct Hotel *next;
-}Hotel;
+} Hotel;
 
 typedef struct DjkElem{
     Citta *citta;
     float peso[2];
     Citta* prev;
-}DjkElem;
+} DjkElem;
 
 typedef struct path {
-    Citta *node;
+    Citta *citta;
     struct path *next;
 } Path;
 
@@ -59,4 +59,6 @@ AlberoCitta *carica_grafo(AlberoCitta *radice);
 void salva_grafo(AlberoCitta *radice);
 AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome);
 int contaCitta(AlberoCitta *radice);
+AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore);
 Path *FindMinPath(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
+void stampa_path(Path *cammino);
