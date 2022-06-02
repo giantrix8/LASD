@@ -20,7 +20,7 @@ typedef struct Citta {
     short treno;
     struct ListaNext *ListaAereo;
     struct ListaNext *ListaTreno;
-    struct Hotel *ListaHotel;
+    struct GrafoHotel *ListaHotel;
 } Citta;
 
 typedef struct ListaNext{
@@ -38,10 +38,22 @@ typedef struct utenti {
     struct 	albero_Utenti* dx;
 } utenti;
 
+typedef struct GrafoHotel{
+    int dim;
+    struct Hotel **hotel; //il primo hotel nel vettore è il più vicino alla stazione/aereoporto
+}GrafoHotel;
+
+typedef struct Arco{
+    int distanza;
+    struct Hotel *destinanzione;
+    struct Arco *next;
+}Arco;
+
 typedef struct Hotel{
     char nome[dim1];
-    struct Hotel *next;
-} Hotel;
+    float prezzo;
+    struct Arco *adiacenti;
+}Hotel;
 
 typedef struct DjkElem{
     Citta *citta;
