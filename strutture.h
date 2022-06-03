@@ -69,19 +69,23 @@ typedef struct path {
     struct path *next;
 } Path;
 
-typedef struct {
+typedef struct Prenotazione{
     Hotel *hotel;
     Path *viaggio;
     float durata;
     float prezzo;
 } Prenotazione;
 
-utenti *LoginRegistrazione(utenti **radice,int *errore);
+//CITTA------------------------------------------------------------------------------------------
 AlberoCitta *carica_grafo(AlberoCitta *radice);
 void salva_grafo(AlberoCitta *radice);
 AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome);
 void contaCitta(AlberoCitta *radice, int *n);
 AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore);
-Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
-GrafoHotel *CaricaHotel(AlberoCitta *radice);
 void StampaCitta(AlberoCitta *radice);
+//HOTEL------------------------------------------------------------------------------------------
+void CaricaHotel(AlberoCitta *radice);
+Hotel *CercaHotel(AlberoCitta *radice, char *NomeCitta, char *NomeAlbergo);
+//OPERAZIONI UTENTE------------------------------------------------------------------------------
+utenti *LoginRegistrazione(utenti **radice,int *errore);
+Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
