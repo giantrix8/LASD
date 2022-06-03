@@ -1,0 +1,18 @@
+Bari		Gallipoli 50 Barifc  0 0
+ 		Barifc 5 Continental 50 Gallipoli 30 Trullo 0 0
+		Trullo 65 Gallipoli 0 0 
+ 		Continental 5 Barifc 28 Trullo 0 0
+		Fine
+
+Roma		Colosseo 10 Portapia 0 0
+		Portapia 0 0
+		Fine
+
+Torino	Fine
+
+Milano	Duomo 75 Expo 0 0
+		Expo	75 Duomo 30 Sansiro 0 0
+		Sansiro 40 Duomo 30 Expo 0 0
+		Fine
+
+

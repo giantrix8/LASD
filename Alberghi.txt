@@ -1,0 +1,4 @@
+Bari 4 	Gallipoli 88 Continental 100 Barifc 31 Trullo 45.50
+Roma	2	Colosseo 175 Portapia 75 
+Torino 1	poli 30
+Milano 3	Duomo 120 Expo 80 Sansiro 45.32
