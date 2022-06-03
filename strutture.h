@@ -68,6 +68,7 @@ typedef struct path {
 } Path;
 
 utenti *LoginRegistrazione(utenti **radice,int *errore);
+//CITTA------------------------------------------------------------------------------------------
 AlberoCitta *carica_grafo(AlberoCitta *radice);
 void salva_grafo(AlberoCitta *radice);
 AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome);
@@ -75,5 +76,8 @@ int contaCitta(AlberoCitta *radice);
 AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore);
 Path *FindMinPath(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
 void stampa_path(Path *cammino);
-GrafoHotel *CaricaHotel(AlberoCitta *radice);
 void StampaCitta(AlberoCitta *radice);
+//HOTEL------------------------------------------------------------------------------------------
+void CaricaHotel(AlberoCitta *radice);
+Hotel *CercaHotel(AlberoCitta *radice, char *NomeCitta, char *NomeAlbergo);
+
