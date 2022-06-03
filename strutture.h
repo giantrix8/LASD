@@ -20,7 +20,7 @@ typedef struct Citta {
     short treno;
     struct ListaNext *ListaAereo;
     struct ListaNext *ListaTreno;
-    struct GrafoHotel *ListaHotel;
+    struct GrafoHotel *Grafohotel;
 } Citta;
 
 typedef struct ListaNext{
@@ -40,6 +40,7 @@ typedef struct utenti {
 
 typedef struct GrafoHotel{
     int dim;
+    int indice;
     struct Hotel **hotel; //il primo hotel nel vettore è il più vicino alla stazione/aereoporto
 }GrafoHotel;
 
@@ -67,7 +68,6 @@ typedef struct path {
 } Path;
 
 utenti *LoginRegistrazione(utenti **radice,int *errore);
-AlberoCitta *EliminaNodo(AlberoCitta *padre,AlberoCitta *radice,char *nome);
 AlberoCitta *carica_grafo(AlberoCitta *radice);
 void salva_grafo(AlberoCitta *radice);
 AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome);
@@ -75,3 +75,5 @@ int contaCitta(AlberoCitta *radice);
 AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore);
 Path *FindMinPath(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
 void stampa_path(Path *cammino);
+GrafoHotel *CaricaHotel(AlberoCitta *radice);
+void StampaCitta(AlberoCitta *radice);

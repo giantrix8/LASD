@@ -19,7 +19,7 @@ static AlberoCitta *InserisciCitta(char *nome,short aereo,short treno, int key) 
     tmp->citta->treno = treno;
     tmp->citta->ListaAereo = NULL;
     tmp->citta->ListaTreno = NULL;
-    tmp->citta->ListaHotel = NULL;
+    tmp->citta->Grafohotel = NULL;
     tmp->citta->key = key;
     return tmp;
 }
@@ -69,8 +69,6 @@ static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazio
     tmp->durata=tempo;
     tmp->citta=destinazione->citta;
     tmp->next=testa;
-    printf("%s ", tmp->citta->nome);
-    printf("durata: %f\n", tmp->durata);
     return tmp;
 }
 
@@ -79,7 +77,6 @@ static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *de
     AlberoCitta *CittaPartenza,*CittaDestinazione;
     int errore=0;
     CittaPartenza=CercaNodo(radice,partenza,&errore);
-    printf("inserito: %s - ", CittaPartenza->citta->nome);
     if (errore==1){
         CittaDestinazione=CercaNodo(radice,destinazione,&errore);
         if (errore==1){
@@ -175,7 +172,7 @@ static AlberoCitta *EliminaNodoCitta(AlberoCitta *TestaAlbero,char *nome){
     if(TestaAlbero!=NULL) {
         AlberoCitta *radice=TestaAlbero;
         AlberoCitta *padre;
-	int errore = 1;
+        int errore;
         radice= CercaNodo(radice,nome,&errore);
         if (radice==NULL){
             printf("/nIl nodo da eliminare non %c presente.",e_accentata);
@@ -266,7 +263,7 @@ AlberoCitta *carica_grafo(AlberoCitta *radice)
 	return radice;
 }
 
-void salva_citta(AlberoCitta *radice, FILE *fp)
+static void salva_citta(AlberoCitta *radice, FILE *fp)
 {
 	if(radice != NULL)
 	{
@@ -277,7 +274,7 @@ void salva_citta(AlberoCitta *radice, FILE *fp)
 	}
 }
 
-void salva_adiacenze(AlberoCitta *radice, FILE *fp)
+static void salva_adiacenze(AlberoCitta *radice, FILE *fp)
 {
 	ListaNext *curr;
 	if(radice != NULL)
@@ -327,3 +324,11 @@ void salva_grafo(AlberoCitta *radice)
     else
         return 0;
  }
+
+ void StampaCitta (AlberoCitta *radice){
+     if (radice!=NULL){
+         StampaCitta(radice->sx);
+         printf("->%s ",radice->citta->nome);
+         StampaCitta(radice->dx);
+     }
+}
