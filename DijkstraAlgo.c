@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "strutture.h"
 
 
@@ -10,11 +11,22 @@ DjkElem *newDjkElem(Citta *citta)
     nuovo->prev = NULL;
     nuovo->peso[0] = -1;
     nuovo->peso[1] = -1;
+    nuovo->tipo = 2;
     return nuovo;
 }
 
-static DjkElem **newVector(DjkElem **DjkVector, int dim){
-    int i = 0;
+Prenotazione *newPrenotazione(Path *path, Hotel *hotel, float durata, float prezzo)
+{
+    Prenotazione *nuovo = (Prenotazione*)malloc(sizeof(Prenotazione));
+    nuovo->viaggio = path;
+    nuovo->hotel = hotel;
+    nuovo->durata = durata;
+    nuovo->prezzo = prezzo;
+    return nuovo;
+}
+
+static DjkElem **newDjk(DjkElem **DjkVector, int dim){
+    int i;
     DjkVector = (DjkElem**)malloc(dim*sizeof(DjkElem*));
     for(i = 0; i < dim; i++){
         DjkVector[i] = (DjkElem*)malloc(sizeof(DjkElem));
@@ -22,13 +34,13 @@ static DjkElem **newVector(DjkElem **DjkVector, int dim){
     return DjkVector;
 }
 
-static DjkElem **newMinHeap(DjkElem **minHeap, int dim){
-    int i = 0;
-    minHeap = (DjkElem**)malloc(dim*sizeof(DjkElem*));
-    for(i = 0; i < dim; i++){
-        minHeap[i] = (DjkElem*)malloc(sizeof(DjkElem));
-    }
-    return minHeap;
+DjkElem **freeDjk(DjkElem **DjkVector, int dim)
+{
+    int i;
+    for(i = 0; i < dim; i++)
+        free(DjkVector[i]);
+    free(DjkVector);
+    return NULL;
 }
 
 static void riempiDjk(AlberoCitta *radice, DjkElem **DjkVector, DjkElem **minHeap){
@@ -74,27 +86,35 @@ void BuildHeap(DjkElem **minHeap, int dim, int modo)
 Citta *EstraiMinimo(DjkElem **minHeap, int dim)
 {
     Citta *minCitta = minHeap[0]->citta;
-    printf("nodo piu vicino: %s\n", minCitta->nome);
+    //Funzione di controllo
+    //printf("nodo piu vicino: %s\n", minCitta->nome);
     DjkSwap(minHeap, 0, dim-1);
     return minCitta;
 }
 
-DjkElem **djkRelax(DjkElem **Vector, Citta *partenza, ListaNext *arco, int modo)
+DjkElem **djkRelax(DjkElem **Vector, Citta *partenza, ListaNext *arco, int tipo, int modo)
 {
-    float newPeso;
+    float newPeso, newPeso2;
     Citta *dest = arco->citta;
 
-
     if(modo == 0)
+    {
         newPeso = Vector[partenza->key]->peso[modo] + arco->durata;
+        newPeso2 = Vector[partenza->key]->peso[(modo+1)%2] + arco->prezzo;
+    }
     else
+    {
+        newPeso2 = Vector[partenza->key]->peso[(modo+1)%2] + arco->durata;
         newPeso = Vector[partenza->key]->peso[modo] + arco->prezzo;
-
-    printf("%s %f + per %s %f = %f\n", partenza->nome, Vector[partenza->key]->peso[modo], dest->nome, arco->durata, newPeso);
+    }
+    //Funzione di controllo
+    //printf("%s %.0f + per %s %.0f = %.0f\n", partenza->nome, Vector[partenza->key]->peso[modo], dest->nome, arco->durata, newPeso);
 
     if(Vector[dest->key]->peso[modo] == -1 || newPeso < Vector[dest->key]->peso[modo]){
         Vector[dest->key]->peso[modo] = newPeso;
+        Vector[dest->key]->peso[(modo+1)%2] = newPeso2;
         Vector[dest->key]->prev = partenza;
+        Vector[dest->key]->tipo = tipo;
     }
     return Vector;
 }
@@ -103,7 +123,7 @@ void stampaPesi(DjkElem **vett, int dim)
 {
     int i;
     for(i = 0; i < dim; i++)
-        printf("per %s %f minuti\n", vett[i]->citta->nome, vett[i]->peso[0]);
+        printf("per %s %.0f minuti, prezzo: %.2f\n", vett[i]->citta->nome, vett[i]->peso[0], vett[i]->peso[1]);
 }
 
 DjkElem **MinPath(Citta *partenza, DjkElem **Vector, DjkElem **minHeap, int dim, int tipo, int modo)
@@ -112,71 +132,113 @@ DjkElem **MinPath(Citta *partenza, DjkElem **Vector, DjkElem **minHeap, int dim,
     {
         Citta *minimo = NULL;
         ListaNext  *curr = NULL;
-        if(tipo == 0)
-            curr = partenza->ListaAereo;
-        else
-            curr = partenza->ListaTreno;
-        while(curr != NULL)
+        if(tipo == 0 || tipo == 2)
         {
-            Vector = djkRelax(Vector, partenza, curr, modo);
-            curr = curr->next;
+            curr = partenza->ListaAereo;
+            while(curr != NULL)
+            {
+                Vector = djkRelax(Vector, partenza, curr, 0, modo);
+                curr = curr->next;
+            }
         }
-        BuildHeap(minHeap, dim, modo);
+        if(tipo == 1 || tipo == 2)
+        {
+            curr = partenza->ListaTreno;
+            while(curr != NULL)
+            {
+                Vector = djkRelax(Vector, partenza, curr, 1, modo);
+                curr = curr->next;
+            }
+        }
+        Heapfy(minHeap, 0, dim, modo);
         minimo = EstraiMinimo(minHeap, dim--);
         minHeap = MinPath(minimo, Vector, minHeap, dim, tipo, modo);
         return minHeap;
     }
 }
 
-Path *inserisciPath(Path *top, Citta *citta)
+Path *inserisciPath(Path *top, Citta *citta, char* tipo)
 {
     Path *nuovo = (Path*)malloc(sizeof(Path));
     nuovo->citta = citta;
+    nuovo->tipo = tipo;
     nuovo->next = top;
     return nuovo;
 }
 
-// tipo: 0 per l'aereo, 1 per il treno
-// modo: 0 per il più veloce, 1 per il più economico
-Path *FindMinPath(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo)
+
+void stampa_path(Path *cammino)
 {
-    int dim = contaCitta(radice);
+    if(cammino->next != NULL)
+    {
+        if(cammino->next->tipo == 0)
+            printf("Aereo ");
+        else if(cammino->next->tipo == 1)
+            printf("Treno ");
+        printf("%s --> %s\n", cammino->citta->nome, cammino->next->citta->nome);
+        stampa_path(cammino->next);
+    }
+}
+
+void stampa_viaggio(Prenotazione *prenotazione)
+{
+    stampa_path(prenotazione->viaggio);
+    printf("Durata totale: %.0f minuti\nPrezzo: %.2f euro\n", prenotazione->durata, prenotazione->prezzo);
+}
+
+// tipo: 0 per l'aereo, 1 per il treno, 2 per misto
+// modo: 0 per il più veloce, 1 per il più economico
+// trova il percorso minimo, permette la scelta dell'hotel e restituisce un puntatore ad una prenotazione
+Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo)
+{
+    int dim = 0;
+    contaCitta(radice, &dim);
     Path *minPath = NULL;
     DjkElem **Vector = NULL;
     DjkElem **minHeap = NULL;
     DjkElem *currElem = NULL;
     Citta *currCitta = NULL;
+    Prenotazione *pren;
 
-    Vector = newVector(Vector, dim);
-    minHeap = newMinHeap(minHeap, dim);
+    Vector = newDjk(Vector, dim);
+    minHeap = newDjk(minHeap, dim);
     riempiDjk(radice, Vector, minHeap);
-
-    Vector[partenza->key]->peso[modo] = 0;
+    //Inizializzazione Dijkstra
+    Vector[partenza->key]->peso[0] = 0;
+    Vector[partenza->key]->peso[1] = 0;
     BuildHeap(minHeap, dim, modo);
-    partenza = EstraiMinimo(minHeap, dim--);
-    minHeap = MinPath(partenza, Vector, minHeap, dim, tipo, modo);
-
-    printf("\n");
-    stampaPesi(Vector, dim);
-
+    partenza = EstraiMinimo(minHeap, dim);
+    //Chiamata Dijkstra
+    minHeap = MinPath(partenza, Vector, minHeap, dim-1, tipo, modo);
+    //stampaPesi(Vector, dim); //Funzione di controllo
+    //Controllo se la destinazione è raggiungibile
+    if(Vector[arrivo->key]->tipo == 2)
+    {
+        printf("La citta non e raggiungibile!");
+        //--NOTIFICA ALL'ADMIN--
+        return NULL;
+    }
+    //Ricostruzione del percorso minimo
     currCitta = arrivo;
     currElem = Vector[arrivo->key];
     while(1)
     {
-        minPath = inserisciPath(minPath, currCitta);
+        minPath = inserisciPath(minPath, currCitta, currElem->tipo);
         currCitta = currElem->prev;
         if(currCitta == NULL)
             break;
         currElem = Vector[currCitta->key];
     }
-    return minPath;
+    //--INSERIRE SCELTA HOTEL--
+
+    //Creazione della prenotazione
+    pren = newPrenotazione(minPath, NULL, Vector[arrivo->key]->peso[0], Vector[arrivo->key]->peso[1]);
+    printf("\n");
+    stampa_viaggio(pren);
+    //Liberazione della memoria e ritorno
+    Vector = freeDjk(Vector, dim);
+    return pren;
 }
 
-void stampa_path(Path *cammino)
-{
-    if(cammino != NULL)
-    {
-        printf(" --> %s", cammino->citta->nome);
-        stampa_path(cammino->next);
-    }
-}
+
+
