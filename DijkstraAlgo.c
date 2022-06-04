@@ -215,7 +215,7 @@ Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo
     if(Vector[arrivo->key]->tipo == 2)
     {
         printf("La citta non e raggiungibile!");
-        //--NOTIFICA ALL'ADMIN--
+        crea_notifica(arrivo, tipo);
         return NULL;
     }
     //Ricostruzione del percorso minimo
