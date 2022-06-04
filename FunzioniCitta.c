@@ -317,12 +317,15 @@ void salva_grafo(AlberoCitta *radice)
  	fclose(fp);
  }
 
- int contaCitta(AlberoCitta *radice)
+void contaCitta(AlberoCitta *radice, int *n)
  {
     if(radice != NULL)
-        return 1 + contaCitta(radice->sx) + contaCitta(radice->dx);
-    else
-        return 0;
+    {
+        contaCitta(radice->sx, n);
+        radice->citta->key = *n;
+        (*n)++;
+        contaCitta(radice->dx, n);
+    }
  }
 
  void StampaCitta (AlberoCitta *radice){
