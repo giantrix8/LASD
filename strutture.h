@@ -94,3 +94,4 @@ Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo
 //GESTIONE NOTIFICHE-----------------------------------------------------------------------------
 void crea_notifica(Citta *citta, int tipo);
 void mostra_notifiche(AlberoCitta *radice);
+void Logo();
