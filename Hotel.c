@@ -6,7 +6,6 @@
 static GrafoHotel *CaricaVetHotel(FILE **file,int dim){
     GrafoHotel *albergo=NULL;
     albergo = (GrafoHotel *) malloc(sizeof(GrafoHotel));
-    albergo->indice = 0;
     albergo->dim = dim;
     albergo->hotel=NULL;
     if (dim!=0) {
@@ -19,27 +18,53 @@ static GrafoHotel *CaricaVetHotel(FILE **file,int dim){
         for (int i = 0; i < dim; i++) {
             fscanf(*file, "%s%f", citta, &prezzo);
             albergo->hotel[i]->prezzo = prezzo;
-            printf("\n%d", i);
+            //printf("\n%d", i);
             strcpy(albergo->hotel[i]->nome, citta);
             albergo->hotel[i]->adiacenti=NULL;
-            printf("->%s %.2f",albergo->hotel[i]->nome,albergo->hotel[i]->prezzo);
+            //printf("->%s %.2f",albergo->hotel[i]->nome,albergo->hotel[i]->prezzo);
         }
     }
     return albergo;
 }
 
-static void CaricaCittaHotel(AlberoCitta *radice, FILE **file){
+static void CaricaCittaHotel(AlberoCitta *radice, FILE **file) {
     AlberoCitta *citta;
-    int errore=0;
+    int errore = 0;
     char cittadafile[LenC];
     int dim;
-    while (fscanf(*file, "%s%d", cittadafile, &dim)==2) {
+    while (fscanf(*file, "%s%d", cittadafile, &dim) == 2) {
         citta = CercaNodo(radice, cittadafile, &errore);
         //printf("%s",citta->citta->nome); FUNZIONA
         citta->citta->Grafohotel = CaricaVetHotel(file, dim);
         //printf("\n%s->%s",citta->citta->nome,citta->citta->hotel->hotel[0]->nome);
     }
 }
+static void StampaHotel (Hotel **hotel, int dim){
+    int i;
+    printf("\n Gli hotel disponibili sono:");
+    for(i=0;i<dim;i++){
+        printf("\n%d %s %.2f",i,hotel[i]->nome,hotel[i]->prezzo);
+    }
+}
+
+Hotel *SceltaHotel(AlberoCitta *radice, char *NomeCitta){
+    int scelta=0;
+    AlberoCitta *nodo;
+    nodo=CercaNodo(radice,NomeCitta,&scelta);
+    StampaHotel(nodo->citta->Grafohotel->hotel,nodo->citta->Grafohotel->dim);
+    do {
+        printf("\nSeleziona l'albergo in cui vuoi pernottare o -1 annullare: ->");
+        scanf("%d",&scelta);
+        if (scelta==-1){
+            return NULL;
+        }
+        if (scelta<0 || scelta>nodo->citta->Grafohotel->dim){
+            printf("\nLa scelta non %s valida",e_accentata);
+        }
+    } while (scelta<0 || scelta>nodo->citta->Grafohotel->dim);
+    return nodo->citta->Grafohotel->hotel[scelta];
+}
+
 Hotel *CercaHotel(AlberoCitta *radice, char *NomeCitta, char *NomeAlbergo){
     AlberoCitta *citta;
     int errore=0;
@@ -73,7 +98,7 @@ static Arco *InserisciArco(Arco *testa, int distanza, char *albergo,AlberoCitta 
      }
      else{
          testa= CreaArco(distanza,albergo,radice,citta);
-         printf(" %d %s",testa->distanza,testa->destinanzione->nome);
+         //printf(" %d %s",testa->distanza,testa->destinanzione->nome);
      }
     return testa;
 }
@@ -89,7 +114,7 @@ static void CaricaAdiacenzaHotel(AlberoCitta *radice, FILE **file){
             fscanf(*file, "%s", albergo);
             if (strcmp(albergo, "Fine") != 0) {
                 hotel = CercaHotel(radice, cittadafile, albergo);
-                printf("\n %s",hotel->nome);
+                //printf("\n %s",hotel->nome);
                 esci = 0;
                 do {
                     fscanf(*file, "%d%s", &distanza, albergo);
