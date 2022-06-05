@@ -3,6 +3,13 @@
 #include <string.h>
 #include "strutture.h"
 
+ void Logo(){
+    system("CLS");
+    printf ("Benvenuto %c\n\t\t             %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",1,218,196,196,196,196,196,196,196,196,196,196,196,196,196,196,196,191);
+    printf ("\nViaggi da 30elloda solo su-> %c %c 3G Travel %c %c",179, 4, 4,179);
+    printf ("\n\t %c                   %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",32,192,196,196,196,196,196,196,196,196,196,196,196,196,196,196,196,217);
+}
+
 void crea_notifica(Citta *citta, int tipo)
 {
     FILE *fp = NULL;
