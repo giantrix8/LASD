@@ -2,3 +2,7 @@ Milano 1 1
 Bari 1 1
 Torino 1 1
 Roma 1 1
+Livorno 0 1
+Ancona 1 0
+Asti 0 1
+Napoli 1 1
