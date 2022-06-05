@@ -43,7 +43,9 @@ static AlberoCitta *RiempiAlberoCitta(AlberoCitta *radice, char *nome, short aer
 AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore) {
     int controllo;
     AlberoCitta *result = NULL;
-
+    if (radice==NULL){
+        return NULL;
+    }
     controllo = strcmp(radice->citta->nome, nome);
     if (controllo == 0) {
         *errore=1;
@@ -52,7 +54,7 @@ AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore) {
     else if (controllo > 0) {
         result = CercaNodo(radice->sx, nome,errore);
     }
-    else {
+    else{
         result = CercaNodo(radice->dx, nome,errore);
     }
     return result;
@@ -104,18 +106,21 @@ static AlberoCitta *CercaPadre(AlberoCitta *radice, char *nome){
         controllo= strcmp(tmp->citta->nome,nome);
         if (controllo==0){
             trovato=1;
+            //printf("\n=0 %s----padre= %s",tmp->citta->nome,padre->citta->nome);
         }
         else if (controllo>0){
             padre=tmp;
             tmp=tmp->sx;
+            //printf("\n>0 %s-----%s",tmp->citta->nome,padre->citta->nome);
         }
         else{
             padre=tmp;
             tmp=tmp->dx;
+            //printf("\n<0 %s-----%s",tmp->citta->nome,padre->citta->nome);
         }
     }
     return padre;
-}
+} //FUNZIONA
 
 static AlberoCitta *CercaFogliaMinAlberoCitta(AlberoCitta *radice){
     AlberoCitta *tmp=radice;
@@ -154,12 +159,12 @@ static void FreeListeAdiacenzaCitta(AlberoCitta *radice){
     while (radice->citta->ListaAereo!=NULL) {
         tmp=radice->citta->ListaAereo->next;
         free(radice->citta->ListaAereo);
-        radice=tmp;
+        radice->citta->ListaAereo=tmp;
     }
     while (radice->citta->ListaTreno!=NULL) {
         tmp=radice->citta->ListaTreno->next;
         free(radice->citta->ListaTreno);
-        radice=tmp;
+        radice->citta->ListaTreno=tmp;
     }/*
     while (radice->citta->ListaHotel!=NULL) {
         tmp=radice->citta->ListaTreno->next;
@@ -168,54 +173,75 @@ static void FreeListeAdiacenzaCitta(AlberoCitta *radice){
     }*/
 }
 
-static AlberoCitta *EliminaNodoCitta(AlberoCitta *TestaAlbero,char *nome){
+static void EliminaNodoCitta(AlberoCitta **TestaAlbero,char *nome){
     if(TestaAlbero!=NULL) {
-        AlberoCitta *radice=TestaAlbero;
+        AlberoCitta *radice = *TestaAlbero;
         AlberoCitta *padre;
-        int errore;
-        radice= CercaNodo(radice,nome,&errore);
-        if (radice==NULL){
-            printf("/nIl nodo da eliminare non %c presente.",e_accentata);
-            return TestaAlbero;
+        int errore = 0;
+        radice = CercaNodo(radice, nome, &errore);
+        if (errore == 0) { //FUNZIONA
+            printf("/nIl nodo da eliminare non %c presente.", e_accentata);
+            return;
         }
         FreeListeAdiacenzaCitta(radice);
-        free(radice->citta);
-        if (radice->sx==NULL && radice->dx==NULL){
+        if (radice->sx == NULL && radice->dx == NULL) { //FUNZIONA
+            padre = CercaPadre(*TestaAlbero, radice->citta->nome);
+            if (padre->sx == radice) {
+                padre->sx = NULL;
+            } else if (padre->dx == radice) {
+                padre->dx = NULL;
+            }
+            free(radice->citta);
             free(radice);
-            radice=NULL;
+            radice = NULL;
         }
-        else if(radice->sx!=NULL && radice->dx!=NULL){
+        else if (radice->sx != NULL && radice->dx != NULL) { //funziona
             AlberoCitta *Min;
-            Min=CercaFogliaMinAlberoCitta(radice->dx); //in Min c'è il nodo minimo del sottoalbero destro del nodo da eliminare
-            padre=CercaPadre(TestaAlbero,Min->citta->nome);//in padre c'è il padre di min
-            if (padre==NULL && radice->dx->sx==NULL) {//Da eliminare è la radice e l'elemento più piccolo del sottoalbero dx è il figlio stesso
-                Min->sx=TestaAlbero->sx;
-                TestaAlbero=Min;
-                free(radice);
-            }
-            else
-            {
-                padre->sx = Min->dx;
-                radice->citta = Min->citta;
+            Min = CercaFogliaMinAlberoCitta(radice->dx); //in Min c'è il nodo minimo del sottoalbero destro del nodo da eliminare
+            padre = CercaPadre(*TestaAlbero, Min->citta->nome);//in padre c'è il padre di Min
+            //printf("\npadre=%s radice=%s Min=%s", padre->citta->nome, radice->citta->nome, Min->citta->nome);
+            free(radice->citta);
+            if (padre==radice) {//Da eliminare è la radice e l'elemento più piccolo del sottoalbero dx è il figlio stesso
+                radice->citta=Min->citta;
+                radice->dx=Min->dx;
                 free(Min);
+            } else //FUNZIONA!
+            {
+                //printf("\ndentro EliminaNodoCitta");
+                radice->citta = Min->citta;
+                padre->sx = Min->dx;
+                free(Min);
+                //printf("\n%s--%s\nFuori EliminaNodoCitta",padre->citta->nome,padre->sx->citta->nome)
+
             }
         }
-        else if (radice->sx!=NULL && radice->dx==NULL){
-            padre->sx=radice->sx;
-            free(radice);
-            radice=padre->sx;
-        }
-        else if (radice->sx==NULL && radice->dx!=NULL){
-            padre->dx=radice->dx;
-            free(radice);
-            radice=padre->dx;
+        else {
+            padre= CercaPadre(*TestaAlbero,radice->citta->nome);
+            if (radice->sx != NULL && radice->dx == NULL) {
+                if (padre->sx == radice) {
+                    padre->sx = radice->sx;
+                    free(radice);
+                } else if (padre->dx == radice) {
+                    padre->dx = radice->sx;
+                    free(radice);
+                }
+            } else if (radice->sx == NULL && radice->dx != NULL) {
+                if (padre->sx == radice) {
+                    padre->sx = radice->dx;
+                    free(radice);
+                } else if (padre->dx == radice) {
+                    padre->dx = radice->dx;
+                    free(radice);
+                }
+            }
         }
     }
-    return TestaAlbero;
+    return;
 }
 
 AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome){
-    testa=EliminaNodoCitta(testa,nome);
+    EliminaNodoCitta(&testa,nome);
+    printf("\n");
     EliminaListaCitta(testa,nome);
     return testa;
 }
@@ -318,7 +344,7 @@ void salva_grafo(AlberoCitta *radice)
  }
 
 void contaCitta(AlberoCitta *radice, int *n)
- {
+{
     if(radice != NULL)
     {
         contaCitta(radice->sx, n);
@@ -326,7 +352,7 @@ void contaCitta(AlberoCitta *radice, int *n)
         (*n)++;
         contaCitta(radice->dx, n);
     }
- }
+}
 
  void StampaCitta (AlberoCitta *radice){
      if (radice!=NULL){
