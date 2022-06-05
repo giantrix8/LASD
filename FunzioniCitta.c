@@ -75,7 +75,7 @@ static ListaNext *InserisciDestinazione(ListaNext *testa,AlberoCitta *destinazio
 }
 
 //tipo==1 se si aggiunge nella lista aereo, tipo==0 se si aggiunge nella lista treno
-static void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *destinazione, float prezzo, float tempo,short tipo){
+void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *destinazione, float prezzo, float tempo,short tipo){
     AlberoCitta *CittaPartenza,*CittaDestinazione;
     int errore=0;
     CittaPartenza=CercaNodo(radice,partenza,&errore);
