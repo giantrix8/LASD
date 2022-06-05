@@ -40,7 +40,6 @@ typedef struct utenti {
 
 typedef struct GrafoHotel{
     int dim;
-    int indice;
     struct Hotel **hotel; //il primo hotel nel vettore è il più vicino alla stazione/aereoporto
 }GrafoHotel;
 
@@ -79,7 +78,6 @@ typedef struct Prenotazione{
 //CITTA------------------------------------------------------------------------------------------
 AlberoCitta *carica_grafo(AlberoCitta *radice);
 void salva_grafo(AlberoCitta *radice);
-void InserisciListaAdiacenza(AlberoCitta *radice,char *partenza, char *destinazione, float prezzo, float tempo,short tipo);
 AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome);
 void contaCitta(AlberoCitta *radice, int *n);
 AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore);
@@ -87,9 +85,8 @@ void StampaCitta(AlberoCitta *radice);
 //HOTEL------------------------------------------------------------------------------------------
 void CaricaHotel(AlberoCitta *radice);
 Hotel *CercaHotel(AlberoCitta *radice, char *NomeCitta, char *NomeAlbergo);
+Hotel *SceltaHotel(AlberoCitta *radice, char *NomeCitta);
+static void StampaHotel (Hotel **hotel, int dim);
 //OPERAZIONI UTENTE------------------------------------------------------------------------------
 utenti *LoginRegistrazione(utenti **radice,int *errore);
 Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
-//GESTIONE NOTIFICHE-----------------------------------------------------------------------------
-void crea_notifica(Citta *citta, int tipo);
-void mostra_notifiche(AlberoCitta *radice);
