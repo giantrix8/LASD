@@ -51,6 +51,9 @@ Hotel *SceltaHotel(AlberoCitta *radice, char *NomeCitta){
     int scelta=0;
     AlberoCitta *nodo;
     nodo=CercaNodo(radice,NomeCitta,&scelta);
+    if (errore!=1){
+        printf ("\nLa citt%s richiesta non %s presente",a_accentata,e_accentata);
+    }
     StampaHotel(nodo->citta->Grafohotel->hotel,nodo->citta->Grafohotel->dim);
     do {
         printf("\nSeleziona l'albergo in cui vuoi pernottare o -1 annullare: ->");
