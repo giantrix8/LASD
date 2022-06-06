@@ -33,17 +33,20 @@ static void CaricaCittaHotel(AlberoCitta *radice, FILE **file) {
     char cittadafile[LenC];
     int dim;
     while (fscanf(*file, "%s%d", cittadafile, &dim) == 2) {
+        errore=0;
         citta = CercaNodo(radice, cittadafile, &errore);
+        if (errore==1){
+            citta->citta->Grafohotel = CaricaVetHotel(file, dim);
+        }
         //printf("%s",citta->citta->nome); FUNZIONA
-        citta->citta->Grafohotel = CaricaVetHotel(file, dim);
         //printf("\n%s->%s",citta->citta->nome,citta->citta->hotel->hotel[0]->nome);
     }
 }
-static void StampaHotel (Hotel **hotel, int dim){
+void StampaHotel (Hotel **hotel, int dim){
     int i;
     printf("\n Gli hotel disponibili sono:");
     for(i=0;i<dim;i++){
-        printf("\n%d %s %.2f",i,hotel[i]->nome,hotel[i]->prezzo);
+        printf("\n%d %s %.2f%c",i,hotel[i]->nome,hotel[i]->prezzo,dollaro);
     }
 }
 
@@ -51,7 +54,7 @@ Hotel *SceltaHotel(AlberoCitta *radice, char *NomeCitta){
     int scelta=0;
     AlberoCitta *nodo;
     nodo=CercaNodo(radice,NomeCitta,&scelta);
-    if (errore!=1){
+    if (scelta!=1){
         printf ("\nLa citt%s richiesta non %s presente",a_accentata,e_accentata);
     }
     StampaHotel(nodo->citta->Grafohotel->hotel,nodo->citta->Grafohotel->dim);
@@ -146,83 +149,51 @@ void CaricaHotel(AlberoCitta *radice){
     fclose(F1);
 }
 
-int minHotel(int *vett, int *visited, int dim)
-{
+static void SalvaHotel (AlberoCitta *radice, FILE **file){
+    fprintf(*file,"\n%s ",radice->citta->nome);
+    if (radice->citta->Grafohotel!=NULL) {
+        fprintf(*file,"%d ",radice->citta->Grafohotel->dim);
+        for (int i = 0; i < radice->citta->Grafohotel->dim; i++) {
+            fprintf(*file, "%s %.2f ", radice->citta->Grafohotel->hotel[i]->nome,
+                    radice->citta->Grafohotel->hotel[i]->prezzo);
+            }
+    }
+    else{
+        fprintf(*file,"0");
+    }
+}
+
+static void SalvaHotelAdiacenza(AlberoCitta *testa, FILE **file) {
+    AlberoCitta *radice = testa;
     int i;
-    int minIndex = -1;
-    for(i = 1; i < dim; i++)
-    {
-        if (visited[i] == 0)
-        {
-            if (minIndex == -1)
-                minIndex = i;
-        }
-        else if(vett[i] > -1 && vett[i] < vett[minIndex])
-                minIndex = i;
-    }
-    return minIndex;
-}
-
-void stampa_pathHotel(Hotel **graph, int arrivo, int *precedenti)
-{
-    if(precedenti[arrivo] != -1)
-    {
-        stampa_pathHotel(graph, precedenti[arrivo], precedenti);
-        printf("--> %s ", graph[arrivo]->nome);
-    }
-}
-
-void relaxHotel(Arco *arco, int *distanze, int partenza, int *precedenti, int dim)
-{
-    Hotel *dest = arco->destinanzione;
-    int newDist = arco->distanza + distanze[dest->key];
-
-    if(distanze[dest->key] == -1 || newDist < distanze[dest->key])
-    {
-        distanze[dest->key] = newDist;
-        precedenti[dest->key] = partenza;
-    }
-}
-
-int *minPathHotel(Hotel **graph, int *distanze, int *visited, int *precedenti, int dim)
-{
-    int i, min;
-    Arco *curr = NULL;
-    for(i = 0; i < dim; i++)
-    {
-        min = minHotel(distanze, visited, dim);
-        visited[min] = 1;
-        curr = graph[min]->adiacenti;
-        while(curr != NULL)
-        {
-            relaxHotel(curr, distanze, graph[min]->key, precedenti, dim);
-            curr = curr->next;
+    fprintf(*file, "%s ", radice->citta->nome);
+    if (radice->citta->Grafohotel!=NULL) {
+        for (i = 0; i < radice->citta->Grafohotel->dim; i++) {
+            fprintf(*file, "%s ", radice->citta->Grafohotel->hotel[i]->nome);
+            while (radice->citta->Grafohotel->hotel[i]->adiacenti != NULL) {
+                fprintf(*file, "%d %s ", radice->citta->Grafohotel->hotel[i]->adiacenti->distanza,radice->citta->Grafohotel->hotel[i]->adiacenti->destinanzione->nome);
+                printf("\n%d %s ", radice->citta->Grafohotel->hotel[i]->adiacenti->distanza,radice->citta->Grafohotel->hotel[i]->adiacenti->destinanzione->nome);
+                radice->citta->Grafohotel->hotel[i]->adiacenti = radice->citta->Grafohotel->hotel[i]->adiacenti->next;
+            }
+            fprintf(*file,"-1 0\n");
         }
     }
-    return distanze;
+    fprintf(*file,"Fine\n\n");
+}
+static void CaricaGrafoIte(AlberoCitta *radice,FILE *F1, FILE *F2){
+    if (radice!=NULL){
+        SalvaHotel(radice, &F1);
+        SalvaHotelAdiacenza(radice, &F2);
+        CaricaGrafoIte(radice->sx,F1,F2);
+        CaricaGrafoIte(radice->dx,F1,F2);
+    }
 }
 
-void djkHotel(GrafoHotel *graph, Hotel *arrivo, int *distanze, int *precedenti)
-{
-    int dim = graph->dim, i;
-    int *visited = (int*)calloc(dim, sizeof(int));
-    distanze = (int*)malloc(dim*sizeof(int));
-    precedenti = (Hotel**)calloc(dim, sizeof(Hotel*));
-
-
-    graph->hotel[0]->key = 0;
-    distanze[0] = 0;
-    precedenti[0] = -1;
-    for(i = 1; i < dim; i++)
-    {
-        graph->hotel[i]->key = i;
-        distanze[i] = -1;
-        precedenti[i] = -1;
-    }
-    free(visited);
-    distanze = minPathHotel(graph->hotel, distanze, visited, precedenti, dim);
-    stampa_pathHotel(graph->hotel, arrivo->key, precedenti);
-    
-    free(distanze);
-    free(precedenti);
+void SalvaGrafoHotel(AlberoCitta *radice){
+    FILE *F1,*F2;
+    F1 = fopen("Alberghi.txt", "w");
+    F2 = fopen("AdiacenzeAlberghi.txt", "w");
+    CaricaGrafoIte(radice,F1,F2);
+    fclose(F1);
+    fclose(F2);
 }
