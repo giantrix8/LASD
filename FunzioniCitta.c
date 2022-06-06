@@ -282,15 +282,15 @@ AlberoCitta *carica_grafo(AlberoCitta *radice)
  		{
  			if(strcmp("0", destName) == 0)
 			 	break;
-            		fscanf(fp, "%f ",&prezzo);
-            		fscanf(fp, "%f ",&durata);
+            fscanf(fp, "%f ",&prezzo);
+            fscanf(fp, "%f ",&durata);
 			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 0);;
 		}
 		//inserimenro in lista aerei
  		while(fscanf(fp, "%s ", destName) > 0)
  		{
-            		fscanf(fp, "%f ",&prezzo);
-            		fscanf(fp, "%f ",&durata);
+            fscanf(fp, "%f ",&prezzo);
+            fscanf(fp, "%f ",&durata);
  			if(strcmp("0", destName) == 0)
 			 	break;
 			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 1);
