@@ -52,6 +52,7 @@ typedef struct Arco{
 typedef struct Hotel{
     char nome[dim1];
     float prezzo;
+    int key;
     struct Arco *adiacenti;
 }Hotel;
 
@@ -89,6 +90,7 @@ Hotel *CercaHotel(AlberoCitta *radice, char *NomeCitta, char *NomeAlbergo);
 Hotel *SceltaHotel(AlberoCitta *radice, char *NomeCitta);
 void StampaHotel (Hotel **hotel, int dim);
 void SalvaGrafoHotel(AlberoCitta *radice);
+void djkHotel(GrafoHotel *graph, Hotel *arrivo);
 //OPERAZIONI UTENTE------------------------------------------------------------------------------
 utenti *LoginRegistrazione(utenti **radice,int *errore);
 Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
