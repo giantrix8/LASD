@@ -115,6 +115,7 @@ DjkElem **djkRelax(DjkElem **Vector, Citta *partenza, ListaNext *arco, int tipo,
         Vector[dest->key]->peso[(modo+1)%2] = newPeso2;
         Vector[dest->key]->prev = partenza;
         Vector[dest->key]->tipo = tipo;
+        //printf("%s %d ", Vector[dest->key]->citta->nome, tipo);
     }
     return Vector;
 }
@@ -198,6 +199,7 @@ Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo
     DjkElem **minHeap = NULL;
     DjkElem *currElem = NULL;
     Citta *currCitta = NULL;
+    Hotel *albergo = NULL;
     Prenotazione *pren;
 
     Vector = newDjk(Vector, dim);
@@ -229,12 +231,20 @@ Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo
             break;
         currElem = Vector[currCitta->key];
     }
-    //--INSERIRE SCELTA HOTEL--
-
     //Creazione della prenotazione
     pren = newPrenotazione(minPath, NULL, Vector[arrivo->key]->peso[0], Vector[arrivo->key]->peso[1]);
-    printf("\n");
     stampa_viaggio(pren);
+    //Scelta dell'Hotel
+    albergo = SceltaHotel(radice, arrivo->nome);
+    if(albergo == NULL)
+    {
+        free(pren);
+        return NULL;
+    }
+    djkHotel(arrivo->Grafohotel, albergo);
+    pren->hotel = albergo;
+    pren->prezzo += albergo->prezzo;
+    printf("\n");
     //Liberazione della memoria e ritorno
     Vector = freeDjk(Vector, dim);
     return pren;
