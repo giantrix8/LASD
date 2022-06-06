@@ -76,6 +76,13 @@ typedef struct Prenotazione{
     float prezzo;
 } Prenotazione;
 
+typedef struct Utenti{
+    char nome[20];
+    char password[20];
+    int saldo;
+    struct Utenti *next;
+}Utenti;
+
 //CITTA------------------------------------------------------------------------------------------
 AlberoCitta *carica_grafo(AlberoCitta *radice);
 void salva_grafo(AlberoCitta *radice);
