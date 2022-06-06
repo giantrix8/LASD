@@ -87,7 +87,8 @@ void StampaCitta(AlberoCitta *radice);
 void CaricaHotel(AlberoCitta *radice);
 Hotel *CercaHotel(AlberoCitta *radice, char *NomeCitta, char *NomeAlbergo);
 Hotel *SceltaHotel(AlberoCitta *radice, char *NomeCitta);
-static void StampaHotel (Hotel **hotel, int dim);
+void StampaHotel (Hotel **hotel, int dim);
+void SalvaGrafoHotel(AlberoCitta *radice);
 //OPERAZIONI UTENTE------------------------------------------------------------------------------
 utenti *LoginRegistrazione(utenti **radice,int *errore);
 Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
