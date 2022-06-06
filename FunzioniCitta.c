@@ -278,15 +278,19 @@ AlberoCitta *carica_grafo(AlberoCitta *radice)
  	while(fscanf(fp, "%s", currentName) > 0)
  	{
  		//Inserimenti in lista treni
- 		while(fscanf(fp, "%s %f %f", destName, &prezzo, &durata) > 0)
+ 		while(fscanf(fp, "%s ", destName) > 0)
  		{
  			if(strcmp("0", destName) == 0)
 			 	break;
+            		fscanf(fp, "%f ",&prezzo);
+            		fscanf(fp, "%f ",&durata);
 			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 0);;
 		}
 		//inserimenro in lista aerei
- 		while(fscanf(fp, "%s %f %f", destName, &prezzo, &durata) > 0)
+ 		while(fscanf(fp, "%s ", destName) > 0)
  		{
+            		fscanf(fp, "%f ",&prezzo);
+            		fscanf(fp, "%f ",&durata);
  			if(strcmp("0", destName) == 0)
 			 	break;
 			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 1);
