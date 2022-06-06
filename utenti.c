@@ -135,6 +135,8 @@ Utenti *signUp(Utenti *lista){
         }
 
     } while (controllo != 1 || riprova != 0);
+    
+    return utente;
 }
 
 void scriviUtenti(Utenti *lista, FILE *fp){
