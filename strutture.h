@@ -84,6 +84,7 @@ AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome);
 void contaCitta(AlberoCitta *radice, int *n);
 AlberoCitta *CercaNodo(AlberoCitta *radice,char *nome,int *errore);
 void StampaCitta(AlberoCitta *radice);
+void ControllaCittaInraggiungibile(AlberoCitta *radice, AlberoCitta *CittaCorrente);
 //HOTEL------------------------------------------------------------------------------------------
 void CaricaHotel(AlberoCitta *radice);
 Hotel *CercaHotel(AlberoCitta *radice, char *NomeCitta, char *NomeAlbergo);
