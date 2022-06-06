@@ -20,6 +20,11 @@ void crea_notifica(Citta *citta)
 
 Path *inserisci_notifica(Path* top, Citta *citta)
 {
+    Path* nuovo = (Path*)malloc(sizeof(Path));
+    nuovo->citta = citta;
+    nuovo->next = top;
+    return nuovo;
+    /*
     if(top == NULL)
     {
         Path* nuovo = (Path*)malloc(sizeof(Path));
@@ -29,6 +34,7 @@ Path *inserisci_notifica(Path* top, Citta *citta)
     }
     else
         top->next = inserisci_notifica(top->next, citta);
+    */
 }
 
 Path *carica_notifiche(AlberoCitta *radice)
@@ -58,6 +64,15 @@ void salva_notifiche(Path* codaNotifiche)
     }
 }
 
+void stampa_notifiche(Path *top)
+{
+    if(top != NULL)
+    {
+        printf("%s -> ", top->citta->nome);
+        stampa_notifiche(top->next);
+    }
+}
+
 void mostra_notifiche(AlberoCitta *radice)
 {
     Path* codaNotifiche = NULL, *tmp = NULL;
@@ -66,14 +81,18 @@ void mostra_notifiche(AlberoCitta *radice)
     float nuovoPrezzo, nuovaDurata;
     int op, errore,tipo;
     codaNotifiche = carica_notifiche(radice);
+    FILE *fp = fopen("notifiche.txt", "w");
+    fprintf(fp, "");
+    fclose(fp);
     if(codaNotifiche == NULL)
     {
         printf("Non ci sono notifiche!\n");
         return;
     }
     do {
-        printf("La citt%c %s non %c raggiungibile\n",a_accentata, codaNotifiche->citta->nome,e_accentata);
-        printf("Premi:\n1 per inserire una citt%c da cui sia raggiungibile\n2 per eliminare il nodo\n3 per tornare indietro\n",a_accentata);
+        stampa_notifiche(codaNotifiche);
+        printf("\nLa citt%c %s non %c raggiungibile\n",a_accentata, codaNotifiche->citta->nome,e_accentata);
+        printf("Premi:\n1 per inserire una citt%c da cui sia raggiungibile\n2 per eliminare il nodo\n",a_accentata);
         scanf("%d", &op);
         if(op == 1)
         {
@@ -102,8 +121,9 @@ void mostra_notifiche(AlberoCitta *radice)
             codaNotifiche = codaNotifiche->next;
             free(tmp);
         }
-    } while(codaNotifiche != NULL && op != 3);
-    FILE *fp = fopen("notifiche.txt", "w");
+    } while(codaNotifiche != NULL);
+    fp = fopen("notifiche.txt", "w");
+    fprintf(fp, "");
     fclose(fp);
     salva_notifiche(codaNotifiche);
 }
