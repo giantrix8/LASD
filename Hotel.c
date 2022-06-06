@@ -145,3 +145,84 @@ void CaricaHotel(AlberoCitta *radice){
     CaricaAdiacenzaHotel(radice,&F1);
     fclose(F1);
 }
+
+int minHotel(int *vett, int *visited, int dim)
+{
+    int i;
+    int minIndex = -1;
+    for(i = 1; i < dim; i++)
+    {
+        if (visited[i] == 0)
+        {
+            if (minIndex == -1)
+                minIndex = i;
+        }
+        else if(vett[i] > -1 && vett[i] < vett[minIndex])
+                minIndex = i;
+    }
+    return minIndex;
+}
+
+void stampa_pathHotel(Hotel **graph, int arrivo, int *precedenti)
+{
+    if(precedenti[arrivo] != -1)
+    {
+        stampa_pathHotel(graph, precedenti[arrivo], precedenti);
+        printf("--> %s ", graph[arrivo]->nome);
+    }
+}
+
+void relaxHotel(Arco *arco, int *distanze, int partenza, int *precedenti, int dim)
+{
+    Hotel *dest = arco->destinanzione;
+    int newDist = arco->distanza + distanze[dest->key];
+
+    if(distanze[dest->key] == -1 || newDist < distanze[dest->key])
+    {
+        distanze[dest->key] = newDist;
+        precedenti[dest->key] = partenza;
+    }
+}
+
+int *minPathHotel(Hotel **graph, int *distanze, int *visited, int *precedenti, int dim)
+{
+    int i, min;
+    Arco *curr = NULL;
+    for(i = 0; i < dim; i++)
+    {
+        min = minHotel(distanze, visited, dim);
+        visited[min] = 1;
+        curr = graph[min]->adiacenti;
+        while(curr != NULL)
+        {
+            relaxHotel(curr, distanze, graph[min]->key, precedenti, dim);
+            curr = curr->next;
+        }
+    }
+    return distanze;
+}
+
+void djkHotel(GrafoHotel *graph, Hotel *arrivo, int *distanze, int *precedenti)
+{
+    int dim = graph->dim, i;
+    int *visited = (int*)calloc(dim, sizeof(int));
+    distanze = (int*)malloc(dim*sizeof(int));
+    precedenti = (Hotel**)calloc(dim, sizeof(Hotel*));
+
+
+    graph->hotel[0]->key = 0;
+    distanze[0] = 0;
+    precedenti[0] = -1;
+    for(i = 1; i < dim; i++)
+    {
+        graph->hotel[i]->key = i;
+        distanze[i] = -1;
+        precedenti[i] = -1;
+    }
+    free(visited);
+    distanze = minPathHotel(graph->hotel, distanze, visited, precedenti, dim);
+    stampa_pathHotel(graph->hotel, arrivo->key, precedenti);
+    
+    free(distanze);
+    free(precedenti);
+}
