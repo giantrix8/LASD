@@ -165,12 +165,19 @@ static void FreeListeAdiacenzaCitta(AlberoCitta *radice){
         tmp=radice->citta->ListaTreno->next;
         free(radice->citta->ListaTreno);
         radice->citta->ListaTreno=tmp;
-    }/*
-    while (radice->citta->ListaHotel!=NULL) {
-        tmp=radice->citta->ListaTreno->next;
-        free(radice->citta->ListaHotel);
-        radice=tmp;
-    }*/
+    }
+    if (radice->citta->Grafohotel!=NULL) {
+        Arco *next;
+        for (int i = 0; i < radice->citta->Grafohotel->dim; i++) {
+            while (radice->citta->Grafohotel->hotel[i]->adiacenti != NULL) {
+                next=radice->citta->Grafohotel->hotel[i]->adiacenti->next;
+                free(radice->citta->Grafohotel->hotel[i]->adiacenti);
+                radice->citta->Grafohotel->hotel[i]->adiacenti=next;
+            }
+            free(radice->citta->Grafohotel->hotel[i]);
+        }
+        free(radice->citta->Grafohotel);
+    }
 }
 
 static void EliminaNodoCitta(AlberoCitta **TestaAlbero,char *nome){
@@ -360,4 +367,42 @@ void contaCitta(AlberoCitta *radice, int *n)
          printf("->%s ",radice->citta->nome);
          StampaCitta(radice->dx);
      }
+}
+
+static void ControlloCitta(ListaNext *lista,char *NomeCitta, int *trovato){
+    ListaNext *next=lista;
+    while (next!=NULL && *trovato==0){
+        if (strcmp(NomeCitta,next->citta->nome)==0){
+            *trovato=1;
+        }
+        else{
+            next=next->next;
+        }
+    }
+}
+
+static void CittaInraggiungibile(AlberoCitta *radice,char *nomeCitta, int *trovato){
+    if (radice!=NULL){
+        ControlloCitta(radice->citta->ListaTreno,nomeCitta,trovato);
+        ControlloCitta(radice->citta->ListaAereo,nomeCitta,trovato);
+        if (*trovato==0){
+            CittaInraggiungibile(radice->sx,nomeCitta,trovato);
+        }
+        if (*trovato==0){
+            CittaInraggiungibile(radice->dx,nomeCitta,trovato);
+        }
+    }
+
+}
+
+void ControllaCittaInraggiungibile(AlberoCitta *radice, AlberoCitta *CittaCorrente){
+    if (CittaCorrente!=NULL) {
+        int trovato = 0;
+        CittaInraggiungibile(radice, CittaCorrente->citta->nome, &trovato);
+        if (trovato == 0) {
+            crea_notifica(CittaCorrente->citta);
+        }
+        ControllaCittaInraggiungibile(radice,CittaCorrente->sx);
+        ControllaCittaInraggiungibile(radice, CittaCorrente->dx);
+    }
 }
