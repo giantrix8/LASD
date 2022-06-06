@@ -172,7 +172,7 @@ static void SalvaHotelAdiacenza(AlberoCitta *testa, FILE **file) {
             fprintf(*file, "%s ", radice->citta->Grafohotel->hotel[i]->nome);
             while (radice->citta->Grafohotel->hotel[i]->adiacenti != NULL) {
                 fprintf(*file, "%d %s ", radice->citta->Grafohotel->hotel[i]->adiacenti->distanza,radice->citta->Grafohotel->hotel[i]->adiacenti->destinanzione->nome);
-                printf("\n%d %s ", radice->citta->Grafohotel->hotel[i]->adiacenti->distanza,radice->citta->Grafohotel->hotel[i]->adiacenti->destinanzione->nome);
+                //printf("\n%d %s ", radice->citta->Grafohotel->hotel[i]->adiacenti->distanza,radice->citta->Grafohotel->hotel[i]->adiacenti->destinanzione->nome);
                 radice->citta->Grafohotel->hotel[i]->adiacenti = radice->citta->Grafohotel->hotel[i]->adiacenti->next;
             }
             fprintf(*file,"-1 0\n");
@@ -197,7 +197,6 @@ void SalvaGrafoHotel(AlberoCitta *radice){
     fclose(F1);
     fclose(F2);
 }
-
 int minHotel(int *vett, int *visited, int dim)
 {
     int i;

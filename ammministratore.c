@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "strutture.h"
- void Logo(){
+void Logo(){
     system("CLS");
     printf ("Benvenuto %c\n\t\t             %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",1,218,196,196,196,196,196,196,196,196,196,196,196,196,196,196,196,191);
     printf ("\nViaggi da 30elloda solo su-> %c %c 3G Travel %c %c",179, 4, 4,179);
@@ -90,7 +89,7 @@ void mostra_notifiche(AlberoCitta *radice)
         return;
     }
     do {
-        stampa_notifiche(codaNotifiche);
+        //stampa_notifiche(codaNotifiche);
         printf("\nLa citt%c %s non %c raggiungibile\n",a_accentata, codaNotifiche->citta->nome,e_accentata);
         printf("Premi:\n1 per inserire una citt%c da cui sia raggiungibile\n2 per eliminare il nodo\n",a_accentata);
         scanf("%d", &op);

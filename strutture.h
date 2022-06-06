@@ -4,7 +4,7 @@
 #define u_accentata 151
 #define dollaro 36
 #define dim1 20
-#define CodAdmin 100
+#define CodAdmin 12345
 
 
 typedef struct  AlberoCitta{
@@ -30,14 +30,6 @@ typedef struct ListaNext{
     float durata;
 } ListaNext;
 
-typedef struct utenti {
-    char 	*nickname;
-    char 	*password;
-    float 	saldo;
-    struct 	albero_Utenti* sx;
-    struct 	albero_Utenti* dx;
-} utenti;
-
 typedef struct GrafoHotel{
     int dim;
     struct Hotel **hotel; //il primo hotel nel vettore è il più vicino alla stazione/aereoporto
@@ -51,8 +43,8 @@ typedef struct Arco{
 
 typedef struct Hotel{
     char nome[dim1];
-    float prezzo;
     int key;
+    float prezzo;
     struct Arco *adiacenti;
 }Hotel;
 
@@ -75,10 +67,9 @@ typedef struct Prenotazione{
     float durata;
     float prezzo;
 } Prenotazione;
-
 typedef struct Utenti{
-    char nome[20];
-    char password[20];
+    char nome[dim1];
+    char password[dim1];
     int saldo;
     struct Utenti *next;
 }Utenti;
@@ -100,10 +91,16 @@ void StampaHotel (Hotel **hotel, int dim);
 void SalvaGrafoHotel(AlberoCitta *radice);
 void djkHotel(GrafoHotel *graph, Hotel *arrivo);
 //OPERAZIONI UTENTE------------------------------------------------------------------------------
-Utenti *signIn(Utenti *lista);
+Utenti *signIn(FILE *fp);
 Utenti *signUp(Utenti *lista);
-Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
+Prenotazione *prenotaViaggio(AlberoCitta *radice, char *cittap, char *cittaa, int tipo, int modo);
+Utenti *inserisciInListaUtenti(Utenti *lista, Utenti *utente);
+Utenti *leggiFileUtenti(FILE *fp);
+void scriviSuFileListaUtenti(Utenti *lista, FILE *fp);
+void scriviUtenti(Utenti *lista, FILE *fp);
+void aggiornaSaldo(Utenti *lista,Utenti *utente, float saldo);
+void RicaricaConto(Utenti *utente);
 //GESTIONE NOTIFICHE-----------------------------------------------------------------------------
-void crea_notifica(Citta *citta, int tipo);
+void crea_notifica(Citta *citta);
 void mostra_notifiche(AlberoCitta *radice);
 void Logo();

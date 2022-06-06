@@ -1,8 +1,8 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include "strutture.h"
+#include <stdlib.h>
 
+#include "strutture.h"
+#include <unistd.h>
 
 DjkElem *newDjkElem(Citta *citta)
 {
@@ -184,14 +184,26 @@ void stampa_path(Path *cammino)
 void stampa_viaggio(Prenotazione *prenotazione)
 {
     stampa_path(prenotazione->viaggio);
-    printf("Durata totale: %.0f minuti\nPrezzo: %.2f euro\n", prenotazione->durata, prenotazione->prezzo);
+    printf("Durata totale: %.0f minuti\nPrezzo: %.2f%c\n", prenotazione->durata, prenotazione->prezzo,dollaro);
+    sleep(2);
 }
 
 // tipo: 0 per l'aereo, 1 per il treno, 2 per misto
 // modo: 0 per il più veloce, 1 per il più economico
 // trova il percorso minimo, permette la scelta dell'hotel e restituisce un puntatore ad una prenotazione
-Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo)
+Prenotazione *prenotaViaggio(AlberoCitta *radice, char *partenzaa, char *arrivoo, int tipo, int modo)
 {
+    Citta *partenza,*arrivo;
+    int errore=0;
+    partenza= (CercaNodo(radice,partenzaa,&errore))->citta;
+    if(errore!=1){
+        return NULL;
+    }
+    errore=0;
+    arrivo= (CercaNodo(radice,arrivoo,&errore))->citta;
+    if(errore!=1){
+        return NULL;
+    }
     int dim = 0;
     contaCitta(radice, &dim);
     Path *minPath = NULL;
@@ -216,8 +228,7 @@ Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo
     //Controllo se la destinazione è raggiungibile
     if(Vector[arrivo->key]->tipo == 2)
     {
-        printf("La citta non e raggiungibile!");
-        crea_notifica(arrivo, tipo);
+        crea_notifica(arrivo);
         return NULL;
     }
     //Ricostruzione del percorso minimo
@@ -249,6 +260,3 @@ Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo
     Vector = freeDjk(Vector, dim);
     return pren;
 }
-
-
-

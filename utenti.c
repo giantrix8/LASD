@@ -49,7 +49,7 @@ void scriviSuFileListaUtenti(Utenti *lista, FILE *fp){
 Utenti *signIn(FILE *fp){
     int controllo;
     Utenti *tmp;
-    tmp = malloc(sizeof(utenti));
+    tmp = malloc(sizeof(Utenti));
     char ps[20];
 
     Utenti *utente = malloc(sizeof (Utenti));
@@ -97,8 +97,8 @@ Utenti *signUp(Utenti *lista){
     int controllo = 0, riprova = 0;
     Utenti *utente, *nuovaLista;
 
-    utente = malloc(sizeof(utenti));
-    nuovaLista = malloc(sizeof(utenti));
+    utente = malloc(sizeof(Utenti));
+    nuovaLista = malloc(sizeof(Utenti));
 
     do {
         printf("Inserisci il tuo nickname : ");
@@ -125,17 +125,18 @@ Utenti *signUp(Utenti *lista){
 
         if(controllo == 1){
             printf("LOGIN EFFETTUATO CON SUCCESSO\n");
-        } else{
+        }
+        else{
             printf("Nome utente o password sbagliata. Inserisci 1 per riprovare 0 per terminare : ");
             scanf("%d", &riprova);
+            if(riprova == 0){
+                exit(1);
+            }
         }
 
-        if(riprova == 0){
-            exit(0);
-        }
+
 
     } while (controllo != 1 || riprova != 0);
-    
     return utente;
 }
 
@@ -152,25 +153,27 @@ void scriviUtenti(Utenti *lista, FILE *fp){
 
     fclose(fp);
 }
+void RicaricaConto(Utenti *utente){
+    printf("\nDi quanto vuoi ricaricare?");
+    float ricarica;
+    scanf("%f",&ricarica);
+    utente->saldo+=ricarica;
+}
 
-
-void aggiornaSaldo(Utenti *lista, int saldo, char nome[20], char password[20]) {
+void aggiornaSaldo(Utenti *lista,Utenti *utente, float saldo) {
     FILE *fp;
-    Utenti *nuovaListaUtenti;
-    nuovaListaUtenti = malloc(sizeof(utenti));
-
-    nuovaListaUtenti = lista;
-
-    while(lista != NULL){
-        if(lista->next != NULL){
-            if (strcmp(lista->nome, nome) == 0 && strcmp(lista->password, password) == 0){
-                lista->saldo = lista->saldo - saldo;
-            }
+    int scelta=1;
+    do {
+        if (utente->saldo > saldo) {
+            utente->saldo = utente->saldo - saldo;
+            printf("\nAcquisto effettuato con successo");
+            scelta = 1;
+        } else {
+            RicaricaConto(lista);
+            printf("\nDigita 1 se vuoi riprovare l'acquisto");
+            scanf("%d", &scelta);
         }
-        lista = lista->next;
-    }
-
+    } while (scelta!=1);
     remove("FileUtenti.txt");
-
-    scriviUtenti(nuovaListaUtenti, fp);
+    scriviUtenti(lista, fp);
 }

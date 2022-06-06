@@ -254,105 +254,105 @@ AlberoCitta *EliminaCitta(AlberoCitta *testa,char *nome){
 }
 
 AlberoCitta *carica_grafo(AlberoCitta *radice)
- {
- 	FILE *fp = NULL;
- 	AlberoCitta *currentNodo;
- 	Citta *currentCitta;
- 	char currentName[LenC], destName[LenC];
- 	short treno, aereo;
- 	float prezzo, durata;
- 	int i = 0, errore = 0;
- 	
- 	//Caricamento albero delle città
- 	fp = fopen("citta.txt", "r");
- 	while(fscanf(fp, "%s", currentName) > 0)
- 	{
- 		fscanf(fp, "%d", &aereo);
- 		fscanf(fp, "%d", &treno);	
- 		radice = RiempiAlberoCitta(radice, currentName, aereo, treno, i++);
-	}
- 	fclose(fp);
+{
+    FILE *fp = NULL;
+    AlberoCitta *currentNodo;
+    Citta *currentCitta;
+    char currentName[LenC], destName[LenC];
+    short treno, aereo;
+    float prezzo, durata;
+    int i = 0, errore = 0;
 
- 	//Caricamento liste di adiacenza
- 	fp = fopen("adiacenze.txt", "r");
- 	while(fscanf(fp, "%s", currentName) > 0)
- 	{
- 		//Inserimenti in lista treni
- 		while(fscanf(fp, "%s ", destName) > 0)
- 		{
- 			if(strcmp("0", destName) == 0)
-			 	break;
+    //Caricamento albero delle città
+    fp = fopen("citta.txt", "r");
+    while(fscanf(fp, "%s", currentName) > 0)
+    {
+        fscanf(fp, "%d", &aereo);
+        fscanf(fp, "%d", &treno);
+        radice = RiempiAlberoCitta(radice, currentName, aereo, treno, i++);
+    }
+    fclose(fp);
+
+    //Caricamento liste di adiacenza
+    fp = fopen("adiacenze.txt", "r");
+    while(fscanf(fp, "%s", currentName) > 0)
+    {
+        //Inserimenti in lista treni
+        while(fscanf(fp, "%s ", destName) > 0)
+        {
+            if(strcmp("0", destName) == 0)
+                break;
             fscanf(fp, "%f ",&prezzo);
             fscanf(fp, "%f ",&durata);
-			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 0);;
-		}
-		//inserimenro in lista aerei
- 		while(fscanf(fp, "%s ", destName) > 0)
- 		{
+            InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 0);;
+        }
+        //inserimenro in lista aerei
+        while(fscanf(fp, "%s ", destName) > 0)
+        {
             fscanf(fp, "%f ",&prezzo);
             fscanf(fp, "%f ",&durata);
- 			if(strcmp("0", destName) == 0)
-			 	break;
-			InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 1);
-		}
-	}
-	fclose(fp);
-	return radice;
+            if(strcmp("0", destName) == 0)
+                break;
+            InserisciListaAdiacenza(radice, currentName, destName, prezzo, durata, 1);
+        }
+    }
+    fclose(fp);
+    return radice;
 }
 
 static void salva_citta(AlberoCitta *radice, FILE *fp)
 {
-	if(radice != NULL)
-	{
-		fprintf(fp, "%s ", radice->citta->nome);
-		fprintf(fp, "%d %d\n", radice->citta->treno, radice->citta->aereo);
-		salva_citta(radice->sx, fp);
-		salva_citta(radice->dx, fp);
-	}
+    if(radice != NULL)
+    {
+        fprintf(fp, "%s ", radice->citta->nome);
+        fprintf(fp, "%d %d\n", radice->citta->treno, radice->citta->aereo);
+        salva_citta(radice->sx, fp);
+        salva_citta(radice->dx, fp);
+    }
 }
 
 static void salva_adiacenze(AlberoCitta *radice, FILE *fp)
 {
-	ListaNext *curr;
-	if(radice != NULL)
-	{
-		fprintf(fp, "%s ", radice->citta->nome);
-		//Salva lista treni
-		curr = radice->citta->ListaTreno;
-		while (curr != NULL)
-		{
-			fprintf(fp, "%s ", curr->citta->nome);
-			fprintf(fp, "%.2f ", curr->prezzo);
-			fprintf(fp, "%.0f ", curr->durata);
-			curr = curr->next;
-		}
-		fprintf(fp, "0 ");
-		//Salva lista aerei
-		curr = radice->citta->ListaAereo;
-		while (curr != NULL)
-		{
-			fprintf(fp, "%s ", curr->citta->nome);
-			fprintf(fp, "%.2f ", curr->prezzo);
-			fprintf(fp, "%.0f ", curr->durata);
-			curr = curr->next;
-		}
-		fprintf(fp, "0\n");
-		salva_adiacenze(radice->sx, fp);
-		salva_adiacenze(radice->dx, fp);
-	}
+    ListaNext *curr;
+    if(radice != NULL)
+    {
+        fprintf(fp, "%s ", radice->citta->nome);
+        //Salva lista treni
+        curr = radice->citta->ListaTreno;
+        while (curr != NULL)
+        {
+            fprintf(fp, "%s ", curr->citta->nome);
+            fprintf(fp, "%.2f ", curr->prezzo);
+            fprintf(fp, "%.0f ", curr->durata);
+            curr = curr->next;
+        }
+        fprintf(fp, "0 ");
+        //Salva lista aerei
+        curr = radice->citta->ListaAereo;
+        while (curr != NULL)
+        {
+            fprintf(fp, "%s ", curr->citta->nome);
+            fprintf(fp, "%.2f ", curr->prezzo);
+            fprintf(fp, "%.0f ", curr->durata);
+            curr = curr->next;
+        }
+        fprintf(fp, "0\n");
+        salva_adiacenze(radice->sx, fp);
+        salva_adiacenze(radice->dx, fp);
+    }
 }
 
 void salva_grafo(AlberoCitta *radice)
- {
- 	FILE *fp;
- 	fp = fopen("citta.txt", "w");
- 	salva_citta(radice, fp);
- 	fclose(fp);
- 	
- 	fp = fopen("adiacenze.txt", "w");
- 	salva_adiacenze(radice, fp);
- 	fclose(fp);
- }
+{
+    FILE *fp;
+    fp = fopen("citta.txt", "w");
+    salva_citta(radice, fp);
+    fclose(fp);
+
+    fp = fopen("adiacenze.txt", "w");
+    salva_adiacenze(radice, fp);
+    fclose(fp);
+}
 
 void contaCitta(AlberoCitta *radice, int *n)
 {
@@ -365,12 +365,12 @@ void contaCitta(AlberoCitta *radice, int *n)
     }
 }
 
- void StampaCitta (AlberoCitta *radice){
-     if (radice!=NULL){
-         StampaCitta(radice->sx);
-         printf("->%s ",radice->citta->nome);
-         StampaCitta(radice->dx);
-     }
+void StampaCitta (AlberoCitta *radice){
+    if (radice!=NULL){
+        StampaCitta(radice->sx);
+        printf("->%s ",radice->citta->nome);
+        StampaCitta(radice->dx);
+    }
 }
 
 static void ControlloCitta(ListaNext *lista,char *NomeCitta, int *trovato){
