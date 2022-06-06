@@ -100,7 +100,8 @@ void StampaHotel (Hotel **hotel, int dim);
 void SalvaGrafoHotel(AlberoCitta *radice);
 void djkHotel(GrafoHotel *graph, Hotel *arrivo);
 //OPERAZIONI UTENTE------------------------------------------------------------------------------
-utenti *LoginRegistrazione(utenti **radice,int *errore);
+Utenti *signIn(Utenti *lista);
+Utenti *signUp(Utenti *lista);
 Prenotazione *prenotaViaggio(AlberoCitta *radice, Citta *partenza, Citta *arrivo, int tipo, int modo);
 //GESTIONE NOTIFICHE-----------------------------------------------------------------------------
 void crea_notifica(Citta *citta, int tipo);
