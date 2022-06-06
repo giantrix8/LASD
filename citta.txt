@@ -2,6 +2,6 @@ Milano 1 1
 Bari 1 1
 Torino 1 1
 Roma 1 1
-Firenze 1 1
-Napoli 1 1
-
+Parigi 1 1
+Ginevra 1 1
+Messina 0 1

@@ -1,5 +1,7 @@
-Milano Torino 40.000000 100 Roma 50.000000 180 Bari 60.000000 300 0 Bari 80.000000 75 Roma 40.000000 50 0
-Torino Roma 50.000000 120 Milano 40.000000 100 0 Bari 70.000000 60 Milano 35.000000 40 0
-Roma Bari 30.000000 90 Milano 50.000000 180 Torino 50.000000 120 0 Milano 40.000000 50 0
-Bari Milano 60.000000 300 Roma 30.000000 90 0 Milano 80.000000 75 0
-
+Milano Parigi 70.00 420 Roma 35.00 280 Bari 85.00 400 Ginevra 50.00 150 Torino 25.00 45 0 Parigi 135.00 90 Ginevra 105.00 55 Roma 50.00 60 Bari 60.00 80 0
+Bari Roma 30.00 110 0 Milano 60.00 80 0
+Torino Ginevra 45,00 170 Milano 25,00 45 0 Ginevra 90.00 65 0
+Roma Bari 30.00 110 Milano 35.00 280 Torino 60.00 310 0 Parigi 120.00 145 Milano 50.00 60 0
+Messina 0 0
+Ginevra Parigi 65.00 220 Torino 45.00 170 0 Parigi 95.00 75 Milano 105.00 55 0
+Parigi Ginevra 65.00 220 Milano 70.00 420 0 Ginevra 95.00 75 Roma 120.00 145 Milano 135.00 90 0
