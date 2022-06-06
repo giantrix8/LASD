@@ -1,17 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "strutture.h"
 
-
-typedef struct Utenti{
-    char nome[20];
-    char password[20];
-    int saldo;
-    struct Utenti *next;
-}utenti;
-
-
-utenti *inserisciInListaUtenti(utenti *lista, utenti *utente){
+Utenti *inserisciInListaUtenti(Utenti *lista, Utenti *utente){
     if(lista==NULL){
         utente->next = lista;
         return utente;
@@ -21,14 +13,13 @@ utenti *inserisciInListaUtenti(utenti *lista, utenti *utente){
     return lista;
 }
 
-
-utenti *leggiFileUtenti(FILE *fp){
-    utenti *tmp, *lista = NULL;
+Utenti *leggiFileUtenti(FILE *fp){
+    Utenti *tmp, *lista = NULL;
 
     fp = fopen("FileUtenti.txt", "r");
 
     while(!feof(fp)){
-        tmp = (utenti *) malloc(sizeof(utenti));
+        tmp = (Utenti *) malloc(sizeof(Utenti));
 
         fscanf(fp,"%s\t%s\t%d",tmp->nome, tmp->password, &tmp->saldo);
 
@@ -41,7 +32,7 @@ utenti *leggiFileUtenti(FILE *fp){
 }
 
 
-void scriviSuFileListaUtenti(utenti *lista, FILE *fp){
+void scriviSuFileListaUtenti(Utenti *lista, FILE *fp){
     fp = fopen("FileUtenti.txt", "a+");
 
     while(lista != NULL){
@@ -55,13 +46,13 @@ void scriviSuFileListaUtenti(utenti *lista, FILE *fp){
 }
 
 
-utenti *signIn(FILE *fp){
+Utenti *signIn(FILE *fp){
     int controllo;
-    utenti *tmp;
+    Utenti *tmp;
     tmp = malloc(sizeof(utenti));
     char ps[20];
 
-    utenti *utente = malloc(sizeof (utenti));
+    Utenti *utente = malloc(sizeof (Utenti));
 
     fp = fopen("FileUtenti.txt", "a+");
 
@@ -83,7 +74,7 @@ utenti *signIn(FILE *fp){
     printf("Inserisci il tuo saldo iniziale : ");
     scanf("%d", &utente->saldo);
 
-    fprintf(fp, "%s\t%s\t%d\n", utente->nome, utente->password, utente->saldo);
+    fprintf(fp, "%s\t%s\t%d\n", utente->nome, tmp->password, utente->saldo);
 
     printf("\nREGISTRAZIONE EFFETTUATA CON SUCCESSO\n");
 
@@ -93,7 +84,7 @@ utenti *signIn(FILE *fp){
 }
 
 
-void stampaListaUtenti(utenti *lista){
+void stampaListaUtenti(Utenti *lista){
     while(lista != NULL){
         if (lista->next != NULL){
             printf("%s %s %d \n", lista->nome, lista->password, lista->saldo);
@@ -102,33 +93,51 @@ void stampaListaUtenti(utenti *lista){
     }
 }
 
+Utenti *signUp(Utenti *lista){
+    int controllo = 0, riprova = 0;
+    Utenti *utente, *nuovaLista;
 
-utenti *signUp(utenti *listaUtenti, char nome[20], char password[20]){
-    utenti *utente;
     utente = malloc(sizeof(utenti));
-    int controllo = 0, riprova = 1;
+    nuovaLista = malloc(sizeof(utenti));
 
-    while(listaUtenti != NULL){
-        if(listaUtenti->next != NULL){
-            if(strcmp(listaUtenti->nome, nome) == 0 && strcmp(listaUtenti->password, password) == 0){
-                strcpy(utente->nome, listaUtenti->nome);
-                strcpy(utente->password, listaUtenti->password);
-                utente->saldo = listaUtenti->saldo;
-                controllo = 1;
+    do {
+        printf("Inserisci il tuo nickname : ");
+        scanf("%s", utente->nome);
+
+        printf("Inserisci la password : ");
+        scanf("%s", utente->password);
+
+        controllo = 0;
+        riprova = 0;
+
+        nuovaLista = lista;
+        while(nuovaLista != NULL){
+            if(nuovaLista->next != NULL){
+                if(strcmp(nuovaLista->nome, utente->nome) == 0 && strcmp(nuovaLista->password, utente->password) == 0){
+                    strcpy(utente->nome, nuovaLista->nome);
+                    strcpy(utente->password, nuovaLista->password);
+                    utente->saldo = nuovaLista->saldo;
+                    controllo = 1;
+                }
             }
+            nuovaLista = nuovaLista->next;
         }
-        listaUtenti = listaUtenti->next;
-    }
 
-    if(controllo == 1){
-        printf("LOGIN EFFETTUATO CON SUCCESSO \n");
-    }
+        if(controllo == 1){
+            printf("LOGIN EFFETTUATO CON SUCCESSO\n");
+        } else{
+            printf("Nome utente o password sbagliata. Inserisci 1 per riprovare 0 per terminare : ");
+            scanf("%d", &riprova);
+        }
 
-    return utente;
+        if(riprova == 0){
+            exit(0);
+        }
+
+    } while (controllo != 1 || riprova != 0);
 }
 
-
-void scriviUtenti(utenti *lista, FILE *fp){
+void scriviUtenti(Utenti *lista, FILE *fp){
 
     fp = fopen("FileUtenti.txt", "a+");
 
@@ -143,9 +152,9 @@ void scriviUtenti(utenti *lista, FILE *fp){
 }
 
 
-void aggiornaSaldo(utenti *lista, int saldo, char nome[20], char password[20]) {
+void aggiornaSaldo(Utenti *lista, int saldo, char nome[20], char password[20]) {
     FILE *fp;
-    utenti *nuovaListaUtenti;
+    Utenti *nuovaListaUtenti;
     nuovaListaUtenti = malloc(sizeof(utenti));
 
     nuovaListaUtenti = lista;
@@ -163,14 +172,3 @@ void aggiornaSaldo(utenti *lista, int saldo, char nome[20], char password[20]) {
 
     scriviUtenti(nuovaListaUtenti, fp);
 }
-
-
-
-utenti *inserisciInListaUtenti(utenti *lista, utenti *utente);
-utenti *leggiFileUtenti(FILE *fp);
-void scriviSuFileListaUtenti(utenti *lista, FILE *fp);
-utenti *signIn(FILE *fp);
-void stampaListaUtenti(utenti *lista);
-utenti *signUp(utenti *listaUtenti, char nome[20], char password[20]);
-void scriviUtenti(utenti *lista, FILE *fp);
-void aggiornaSaldo(utenti *lista, int saldo, char nome[20], char password[20]);
