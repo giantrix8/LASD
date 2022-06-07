@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "strutture.h"
 void Logo(){
     system("CLS");
@@ -7,6 +8,17 @@ void Logo(){
     printf ("\nViaggi da 30elloda solo su-> %c %c 3G Travel %c %c",179, 4, 4,179);
     printf ("\n\t %c                   %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",32,192,196,196,196,196,196,196,196,196,196,196,196,196,196,196,196,217);
 }//FUNZIONA
+
+static int CercaNotifica(Path *testa, char *nomecitta){
+    if (testa==NULL){return 0;}
+    if (strcmp(nomecitta,testa->citta->nome)==0){
+        return 1;
+    }
+    else{
+        return CercaNotifica(testa->next,nomecitta);
+    }
+}
+
 
 void crea_notifica(Citta *citta)
 {
@@ -47,8 +59,11 @@ Path *carica_notifiche(AlberoCitta *radice)
     fp = fopen("notifiche.txt", "r");
     while(fscanf(fp, "%s", nome) > 0)
     {
-        currCitta = (CercaNodo(radice, nome, &errore))->citta;
-        codaNotifiche = inserisci_notifica(codaNotifiche, currCitta);
+        int trovato=CercaNotifica(codaNotifiche,nome);
+        if(trovato==0){
+            currCitta = (CercaNodo(radice, nome, &errore))->citta;
+            codaNotifiche = inserisci_notifica(codaNotifiche, currCitta);
+        }
     }
     fclose(fp);
     return codaNotifiche;

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <limits.h>
 #include "strutture.h"
 #include <unistd.h>
 
@@ -9,8 +9,8 @@ DjkElem *newDjkElem(Citta *citta)
     DjkElem *nuovo = (DjkElem*)malloc(sizeof(DjkElem));
     nuovo->citta = citta;
     nuovo->prev = NULL;
-    nuovo->peso[0] = -1;
-    nuovo->peso[1] = -1;
+    nuovo->peso[0] = INT_MAX;
+    nuovo->peso[1] = INT_MAX;
     nuovo->tipo = 2;
     return nuovo;
 }

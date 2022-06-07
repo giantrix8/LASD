@@ -3,8 +3,8 @@
 #include "strutture.h"
 
 int main() {
-    system("color 0e");
-    int op = 1, flag = 0, opzioneViaggio, offerta, k = 1, acquisto;
+    system("color 30");
+    int op = 1,gp=0, flag = 0, opzioneViaggio, offerta, k = 1, acquisto;
     char partenza[20], destinazione[20], hotel[20];
     AlberoCitta *grafocitta=NULL;
     Utenti *utenteInQuestione, *lista;
@@ -69,9 +69,9 @@ int main() {
             booking = prenotaViaggio(grafocitta, partenza, destinazione, opzioneViaggio, op);
             if (booking == NULL) {
                 printf("Ops... Il viaggio non %c disponibile, inserisci 0 per riprovare o 1 per uscire", e_accentata);
-                scanf("%d", &op);
+                scanf("%d", &gp);
             }
-            if (op == 1) {
+            if (gp == 1) {
                 SalvaGrafoHotel(grafocitta);
                 salva_grafo(grafocitta);
                 exit(1);
@@ -83,11 +83,12 @@ int main() {
         scanf("%d",&op);
         if(op==1){
             aggiornaSaldo(lista,utenteInQuestione,booking->prezzo);
-            printf("\nBuon Viaggio %c",1);
+            printf("\nBuon Viaggio %c\n\n",1);
         }
     }
     SalvaGrafoHotel(grafocitta);
     salva_grafo(grafocitta);
+    system("PAUSE");
     exit(0);
 }
 
